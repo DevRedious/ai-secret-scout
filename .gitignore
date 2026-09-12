@@ -1,0 +1,7 @@
+node_modules/
+__pycache__/
+*.pyc
+*.bak
+scratch/
+audit_secrets_*
+rapport_audit*

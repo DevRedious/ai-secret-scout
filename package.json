@@ -1,0 +1,57 @@
+{
+	"name": "ai-secret-scout",
+	"version": "2.4.2",
+	"description": "Zero-dependency heuristic secret scanner & redaction tool for AI coding assistants (Claude Code, Antigravity, Codex, Copilot, Cursor)",
+	"homepage": "https://github.com/DevRedious/ai-secret-scout#readme",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/DevRedious/ai-secret-scout.git"
+	},
+	"bugs": {
+		"url": "https://github.com/DevRedious/ai-secret-scout/issues"
+	},
+	"main": "bin/aiscout.js",
+	"bin": {
+		"aiscout": "bin/aiscout.js",
+		"ai-secret-scout": "bin/aiscout.js"
+	},
+	"files": [
+		"bin",
+		"ai_secret_scout.py",
+		"README.md",
+		"README.fr.md"
+	],
+	"scripts": {
+		"postinstall": "node ./bin/check-environment.js --postinstall",
+		"start": "node ./bin/aiscout.js",
+		"format": "biome format --write .",
+		"lint": "biome lint .",
+		"check": "biome check --write .",
+		"ci": "biome ci .",
+		"ci:fix": "biome check --write --unsafe ."
+	},
+	"keywords": [
+		"security",
+		"secrets",
+		"scanner",
+		"redact",
+		"ai",
+		"claude",
+		"gemini",
+		"antigravity",
+		"codex",
+		"copilot",
+		"cursor",
+		"tui",
+		"cli"
+	],
+	"author": "devredious",
+	"license": "MIT",
+	"engines": {
+		"node": ">=16.0.0"
+	},
+	"preferGlobal": true,
+	"devDependencies": {
+		"@biomejs/biome": "^2.5.13"
+	}
+}
