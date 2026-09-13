@@ -13,6 +13,7 @@
 
   <p align="center">
     <!-- Ligne 1 : badges techno & plateforme -->
+    <a href="https://socket.dev/npm/package/ai-secret-scout"><img src="https://badge.socket.dev/npm/package/ai-secret-scout" alt="Socket Badge"></a>
     <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&amp;logoColor=white" alt="Python 3.10+">
     <img src="https://img.shields.io/badge/Interface-TUI%20Plein%20%C3%89cran-06B6D4?logo=gnometerminal&amp;logoColor=white" alt="TUI Plein Écran">
     <img src="https://img.shields.io/badge/D%C3%A9pendances-Zero%20External-22c55e?logo=python&amp;logoColor=white" alt="Zéro Dépendance">
