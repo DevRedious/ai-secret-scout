@@ -9,7 +9,7 @@
        ◈  A I   S E C R E T   S C O U T  ◈
   </pre>
 
-  <h2>AI Secret Scout (<code>aiscout</code>) — v2.4.4</h2>
+  <h2>AI Secret Scout (<code>aiscout</code>) — v2.4.5</h2>
 
   <p align="center">
     <!-- Row 1: tech & platform badges -->
@@ -186,7 +186,7 @@ The application automatically switches your terminal to an alternate screen buff
 ### 1. Central Hub & Dashboard
 
 ```text
- ◈ AISCOUT v2.4.4 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
+ ◈ AISCOUT v2.4.5 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
 
                  █████╗ ██╗   ███████╗ ██████╗ ██████╗ ██╗   ██╗████████╗
                 ██╔══██╗██║   ██╔════╝██╔════╝██╔═══██╗██║   ██║╚══██╔══╝
@@ -222,7 +222,7 @@ The application automatically switches your terminal to an alternate screen buff
 The interactive table allows fluid inspection of all detected secrets with multi-criteria sorting and instantaneous full-text filtering:
 
 ```text
- ◈ AISCOUT v2.4.4 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
+ ◈ AISCOUT v2.4.5 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
 
    📋 SECRET EXPLORER (1/21) — Mode : MASKED 🛡️ │ Sort : Severity (🔴 > 🟡 > 🔵)
 
@@ -243,7 +243,7 @@ The interactive table allows fluid inspection of all detected secrets with multi
 Pressing `/` opens an inline prompt directly in the status bar. The table updates dynamically with every keystroke:
 
 ```text
- ◈ AISCOUT v2.4.4 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
+ ◈ AISCOUT v2.4.5 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
 
    📋 SECRET EXPLORER (1/3) — Mode : MASKED 🛡️ │ Sort : Severity (🔴 > 🟡 > 🔵)
          🔍 Active filter: "github" (3 matching secrets) │ [Backspace/Esc] Clear 
@@ -263,7 +263,7 @@ Pressing `/` opens an inline prompt directly in the status bar. The table update
 Pressing `Enter` on any row displays a full diagnostic modal card highlighting the source file, context, and remediation recommendations:
 
 ```text
- ◈ AISCOUT v2.4.4 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
+ ◈ AISCOUT v2.4.5 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
 
    ╭──────────────────────────────────────────────────────────────────────────────────╮
    │  AUDIT CARD FOR DETECTED SECRET                                                  │
@@ -292,7 +292,7 @@ Pressing `Enter` on any row displays a full diagnostic modal card highlighting t
 During scans, redactions, or reports generation, an animated 100ms spinner displays current scan phase and progress percentage:
 
 ```text
- ◈ AISCOUT v2.4.4 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
+ ◈ AISCOUT v2.4.5 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
 
                  █████╗ ██╗   ███████╗ ██████╗ ██████╗ ██╗   ██╗████████╗
                 ██╔══██╗██║   ██╔════╝██╔════╝██╔═══██╗██║   ██║╚══██╔══╝
@@ -328,7 +328,7 @@ During scans, redactions, or reports generation, an animated 100ms spinner displ
 The **Watchdog** mode turns `aiscout` into a background sentinel:
 
 ```text
- ◈ AISCOUT v2.4.4 │ User : dev_redious │ Host : workstation                12/09/2026 22:21
+ ◈ AISCOUT v2.4.5 │ User : dev_redious │ Host : workstation                12/09/2026 22:21
 
             📡 REAL-TIME MONITORING (WATCHDOG)  │  🟢 [ACTIVE SENTINEL]
         Detects active AI sessions writing to disk and sends instant desktop alerts
@@ -359,7 +359,7 @@ The **Watchdog** mode turns `aiscout` into a background sentinel:
 TUI Menu `[7]` provides complete control over backup files created prior to sanitization:
 
 ```text
- ◈ AISCOUT v2.4.4 │ User : dev_redious │ Host : workstation                12/09/2026 22:22
+ ◈ AISCOUT v2.4.5 │ User : dev_redious │ Host : workstation                12/09/2026 22:22
 
               ↩️  SAFE RESTORE & BACKUP MANAGER (.BAK)
            Restore original files before redaction or purge stale backup copies.
@@ -400,7 +400,7 @@ TUI Menu `[7]` provides complete control over backup files created prior to sani
 | **GitHub Token (PAT / Fine-Grained)** | 🔴 **CRITICAL** | `ghp_[A-Za-z0-9]{36}`, `github_pat_[A-Za-z0-9_]{82}` |
 | **GitLab Personal Access Token** *(New)* | 🔴 **CRITICAL** | `glpat-[0-9a-zA-Z_\-]{20,}` |
 | **HuggingFace Token** *(New)* | 🔴 **CRITICAL** | `hf_[a-zA-Z0-9]{34,}` |
-| **Private Key (SSH / RSA / ECC / PEM)** | 🔴 **CRITICAL** | `-----BEGIN (?:OPENSSH|RSA|EC) PRIVATE KEY-----` |
+| **Private Key (SSH / RSA / ECC / PEM)** | 🔴 **CRITICAL** | `-----BEGIN (?:OPENSSH\|RSA\|DSA\|EC\|ENCRYPTED\|PGP)? PRIVATE KEY-----` |
 | **Stripe Secret Key** | 🔴 **CRITICAL** | `sk_live_[0-9a-zA-Z]{24,}`, `rk_live_[0-9a-zA-Z]{24,}` |
 | **Database URI (with Credentials)** | 🔴 **CRITICAL** | `postgres://user:password@host`, `mysql://...`, `mongodb://...` |
 | **Infisical / Coolify Token** | 🔴 **CRITICAL** | `st.[a-f0-9]{24}.[a-f0-9]{64}`, `inf_sec_...`, `inf_tok_...` |

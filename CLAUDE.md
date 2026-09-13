@@ -26,8 +26,8 @@ python3 -m py_compile ai_secret_scout.py  # vérification syntaxique minimale
 npm run lint      # biome lint . (ne couvre que le JS de bin/)
 npm run check     # biome check --write .
 npm run ci        # biome ci . (indentation par tabulations, imports `node:`)
-npm test          # node --test : test/*.test.js, lancés via bin/aiscout.js sur un faux $HOME
-node --test --test-name-pattern="list-rules"   # un seul test
+npm test          # node --test "test/*.test.js" : CLI via bin/aiscout.js, moteur via python -c, sur un faux $HOME
+node --test --test-name-pattern="list-rules" "test/*.test.js"   # un seul test
 npm publish --dry-run   # vérifier le contenu du tarball avant publication
 ```
 
@@ -62,19 +62,27 @@ Au premier lancement, `load_custom_rules()` crée `~/.config/aiscout/rules.json`
 - **Les clés internes sont en français.** Sévérités `CRITIQUE` / `ÉLEVÉ` / `MOYEN`, noms de catégories
   (`"Clé Privée (SSH / RSA / ECC)"`, `"Mot de passe en clair dans le Prompt"`…) et contextes d'usage
   sont stockés en FR, puis traduits à l'affichage. `is_valid_secret` filtre sur des **sous-chaînes de ces
-  noms** (`"Clé Privée"`, `"Prompt"`, `"CLI"`, `"commande"`, `"sensible"`) et le tri de `scan()` compare
+  noms** (`"Clé Privée"`, `"Prompt"`, `"CLI"`, `"commande"`, `"sensible"`, plus `"Base de données"` dans
+  `FREE_TEXT_RULE_MARKERS`, qui décide si les mots courts de `WEAK_PLACEHOLDER_KEYWORDS` s'appliquent) et le tri de `scan()` compare
   aux sévérités FR. Renommer une catégorie désactive silencieusement ses heuristiques ; toute nouvelle
   règle demande aussi une entrée dans `RULE_I18N["en"]`.
-- **La logique de scan existe en trois exemplaires** : `scan()` via ripgrep (un `rg` par règle, puis
-  nouveau passage `re.finditer` en Python sur chaque ligne trouvée), `scan()` en repli pur Python quand
-  `rg` est absent (seulement `.jsonl`/`.json`/`.md`), et `scan_single_file()`. Une modification du
-  matching ou de la construction des `Finding` doit être reportée dans les trois. Les regex doivent donc
-  rester compatibles à la fois avec ripgrep et avec `re`. Quand une regex comporte un groupe, c'est `group(1)` qui est retenu comme secret.
+- **Deux chemins de scan, une seule correspondance** : `scan()` passe par ripgrep (un `rg` par règle) ou,
+  sans `rg`, lit en Python les `.jsonl`/`.json`/`.md` ; `scan_single_file()` sert au watchdog. Tous
+  aboutissent à `_match_line()`, seul endroit où se construisent les `Finding`. Ripgrep ne fait que
+  présélectionner les lignes : `rg_compatible_regex()` retire les assertions `(?=…)`/`(?!…)` qu'il refuse,
+  puis `re` réapplique la regex complète. Si `rg` rejette encore une regex (rétroréférence…), la règle
+  bascule en repli Python. La sortie `rg` est lue avec `--null` (chemins `C:\` sous Windows). Quand une
+  regex comporte un groupe, c'est `group(1)` qui est retenu comme secret.
+- **Tests** : `AISCOUT_DISABLE_RIPGREP=1` force le repli Python, `AISCOUT_NO_NOTIFY=1` coupe les
+  notifications bureau. Les tests de détection tournent dans les deux modes (le mode ripgrep est ignoré si
+  `rg` n'est pas dans le `PATH` ; la CI l'installe). Hors terminal, le watchdog tourne sans lecture clavier.
 - **Anti-auto-détection** : les chemins contenant `ai_secret_scout` sont ignorés, tout comme les lignes
   contenant `[REDACTED_BY_AISCOUT]`, `AI SECRET SCOUT` ou `FICHE DÉTAILLÉE DU SECRET`. Changer ces libellés
   (dans les exports par exemple) peut faire remonter les rapports de l'outil comme des fuites.
 - **Caviardage** : `redact_secret` remplace *toutes* les occurrences de la valeur dans le fichier, pas
-  seulement la ligne. Le `.bak` n'est créé qu'au premier caviardage, il conserve donc l'original.
+  seulement la ligne, et travaille en octets (octets non UTF-8 et CRLF préservés). Le `.bak` n'est créé
+  qu'au premier caviardage, il conserve donc l'original ; pour une cible fichier (`history.jsonl`), il est
+  posé à côté et `list_backups()` le retrouve.
   `restore_backup` copie `X.bak` sur `X` puis supprime le `.bak`. Les `.bak` sont exclus des scans.
 
 ## Maintenance

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 ===============================================================================
-AI SECRET SCOUT (aiscout) — v2.1.0 Full TUI Application
+AI SECRET SCOUT (aiscout) — Full TUI Application
 Audit & Détection de secrets en clair dans les transcriptions & mémoires d'IA
 Interface TUI plein écran avec logo centré, menus larges, flèches et animations
 Compatible : Claude Code, Antigravity/Gemini CLI, Codex, Copilot CLI, Cursor, Aider
@@ -41,7 +41,7 @@ else:
     import termios
     import tty
 
-VERSION = "2.4.4"
+VERSION = "2.4.5"
 
 # --- INTERNATIONALISATION (I18N) ---
 def detect_default_lang() -> str:
@@ -293,6 +293,38 @@ I18N_STRINGS = {
         "watchdog_act_modification": "Modification",
         "notif_title": "Secret Détecté",
         "notif_sec": "Secret",
+        "confirm_title": "⚠️  CONFIRMATION",
+        "confirm_bottom": "[O] Confirmer  │  [Annuler] Toute autre touche",
+        "continue_hint": "[Entrée] / [Espace] pour continuer",
+        "filter_tool_lbl": "Outil",
+        "filter_project_lbl": "Projet",
+        "table_empty_search_hint": "[Backspace/Esc] Effacer la recherche │ [Q] Retour",
+        "table_empty_hint": "[Esc] / [Q] Retour au tableau de bord",
+        "redact_file_lbl": "Fichier",
+        "redact_line_lbl": "Ligne",
+        "filter_title": "🏷️  GESTION DES FILTRES PAR OUTIL IA",
+        "filter_reset": "[R] Réinitialiser tous les filtres",
+        "filter_back": "[Q] Retour au menu principal",
+        "filter_active_tag": "(ACTIF)",
+        "filter_bottom": "Sélectionnez un numéro [1-N], [R] pour réinitialiser ou [Q] pour retour",
+        "export_title": "💾 EXPORTER LE DOSSIER D'AUDIT COMPLET",
+        "export_md": "[1] Exporter en Markdown : {name}",
+        "export_json": "[2] Exporter en JSON     : {name}",
+        "export_cancel": "[Q] Annuler et revenir au menu",
+        "export_bottom": "Appuyez sur [1] ou [2] pour exporter, ou [Q] pour annuler",
+        "export_progress": "Génération du dossier d'audit en cours...",
+        "export_writing": "Écriture des données sécurisées...",
+        "export_done": "✔ RAPPORT D'AUDIT EXPORTÉ AVEC SUCCÈS !",
+        "export_file": "Fichier : {path}",
+        "export_total": "Total de secrets consignés : {count}",
+        "export_return": "[Entrée] ou [Espace] pour revenir au menu",
+        "bak_confirm_one": "Restaurer {name} depuis sa sauvegarde ?",
+        "bak_restored_one": "✔ {name} restauré avec succès !",
+        "bak_restore_failed": "❌ Échec de la restauration.",
+        "bak_confirm_all": "Restaurer les {count} sauvegardes ?",
+        "bak_restored_all": "✔ {count} fichier(s) restauré(s) avec succès !",
+        "bak_confirm_purge": "⚠️ SUPPRIMER DÉFINITIVEMENT les {count} sauvegardes (.bak) ?",
+        "bak_purged": "✔ {count} fichier(s) .bak supprimé(s) définitivement.",
         "menu_1": ("AUDIT COMPLET DES SESSIONS IA", "Scanne toutes les transcriptions et mémoires d'IA (Claude, Gemini, etc.)"),
         "menu_2": ("EXPLORATEUR DE SECRETS (TABLEAU TUI)", "Naviguer au clavier dans la liste des secrets détectés et inspecter"),
         "menu_3": ("MODE RÉVÉLATION (VALEURS EN CLAIR)", "Basculer l'affichage des secrets en clair ou masqué (ghp_**** vs brut)"),
@@ -412,6 +444,38 @@ I18N_STRINGS = {
         "watchdog_act_modification": "Modification",
         "notif_title": "Secret Detected",
         "notif_sec": "Secret",
+        "confirm_title": "⚠️  CONFIRMATION",
+        "confirm_bottom": "[Y] Confirm  │  [Cancel] Any other key",
+        "continue_hint": "[Enter] / [Space] to continue",
+        "filter_tool_lbl": "Tool",
+        "filter_project_lbl": "Project",
+        "table_empty_search_hint": "[Backspace/Esc] Clear search │ [Q] Back",
+        "table_empty_hint": "[Esc] / [Q] Return to dashboard",
+        "redact_file_lbl": "File",
+        "redact_line_lbl": "Line",
+        "filter_title": "🏷️  AI TOOL FILTERS",
+        "filter_reset": "[R] Reset all filters",
+        "filter_back": "[Q] Back to main menu",
+        "filter_active_tag": "(ACTIVE)",
+        "filter_bottom": "Pick a number [1-N], [R] to reset or [Q] to go back",
+        "export_title": "💾 EXPORT FULL AUDIT REPORT",
+        "export_md": "[1] Export as Markdown : {name}",
+        "export_json": "[2] Export as JSON     : {name}",
+        "export_cancel": "[Q] Cancel and return to menu",
+        "export_bottom": "Press [1] or [2] to export, or [Q] to cancel",
+        "export_progress": "Generating audit report...",
+        "export_writing": "Writing report data...",
+        "export_done": "✔ AUDIT REPORT EXPORTED SUCCESSFULLY!",
+        "export_file": "File : {path}",
+        "export_total": "Secrets recorded : {count}",
+        "export_return": "[Enter] or [Space] to return to menu",
+        "bak_confirm_one": "Restore {name} from its backup copy?",
+        "bak_restored_one": "✔ {name} restored successfully!",
+        "bak_restore_failed": "❌ Restoration failed.",
+        "bak_confirm_all": "Restore all {count} backup files?",
+        "bak_restored_all": "✔ {count} file(s) restored successfully!",
+        "bak_confirm_purge": "⚠️ PERMANENTLY PURGE all {count} backup (.bak) files?",
+        "bak_purged": "✔ {count} .bak file(s) permanently deleted.",
         "menu_1": ("RUN FULL AUDIT ACROSS ALL AI SESSIONS", "Scan all AI transcripts and memories (Claude, Gemini, Codex, etc.)"),
         "menu_2": ("SECRET EXPLORER (INTERACTIVE TUI TABLE)", "Browse and inspect detected credentials with keyboard controls"),
         "menu_3": ("REVEAL MODE (TOGGLE PLAIN-TEXT VALUES)", "Toggle plain-text vs masked display (ghp_**** vs raw)"),
@@ -482,7 +546,7 @@ PATTERNS = {
         "description": "Jeton d'accès GitHub personnel ou OAuth (droits en lecture/écriture sur les dépôts)."
     },
     "Clé Privée (SSH / RSA / ECC)": {
-        "regex": r"-----BEGIN (?:RSA|DSA|EC|OPENSSH|PGP)? PRIVATE KEY-----",
+        "regex": r"-----BEGIN (?:(?:RSA|DSA|EC|OPENSSH|ENCRYPTED|PGP) )?PRIVATE KEY(?: BLOCK)?-----",
         "severity": "CRITIQUE",
         "description": "En-tête de clé cryptographique privée permettant l'authentification serveur ou la signature."
     },
@@ -497,7 +561,7 @@ PATTERNS = {
         "description": "Clé d'API Claude (Anthropic) permettant de consommer des tokens d'inférence."
     },
     "OpenAI API Key": {
-        "regex": r"\bsk-(?:proj-)?[A-Za-z0-9_-]{32,}\b",
+        "regex": r"\bsk-(?!ant-)(?:proj-)?[A-Za-z0-9_-]{32,}\b",
         "severity": "ÉLEVÉ",
         "description": "Clé d'API OpenAI pour GPT / embeddings."
     },
@@ -527,22 +591,22 @@ PATTERNS = {
         "description": "Jeton de coffre-fort de secrets Infisical ou jeton API Coolify."
     },
     "Base de données (URI avec mot de passe)": {
-        "regex": r"(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?):\/\/[a-zA-Z0-9_\-\.]+:(?!(?:password|root|postgres|admin|\$\{[^\}]+\}|<[^>]+>|\*+|\[|\%|\bYOUR_))[^\s@\"'`:]+@[a-zA-Z0-9_\-\.]+",
+        "regex": r"(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?):\/\/[a-zA-Z0-9_\-\.]+:(?!(?:password|root|postgres|admin)@|\$\{|<|\*+@|\[|%|YOUR_)([^\s@\"'`:\\]+)@[a-zA-Z0-9_\-\.]+",
         "severity": "CRITIQUE",
         "description": "Chaîne de connexion de base de données contenant identifiant et mot de passe en clair."
     },
     "Variable d'environnement sensible": {
-        "regex": r"(?i)\b(?:PGPASSWORD|MYSQL_PWD|DB_PASSWORD|AUTH_TOKEN|API_KEY|SECRET_KEY|COOLIFY_API_TOKEN)=([\"']?[A-Za-z0-9_\-@#$%^&+=!]{8,}[\"']?)",
+        "regex": r"(?i)\b(?:PGPASSWORD|MYSQL_PWD|DB_PASSWORD|AUTH_TOKEN|API_KEY|SECRET_KEY|COOLIFY_API_TOKEN)=(?:\\?[\"'])?([A-Za-z0-9_\-@#$%^&+=!]{8,})",
         "severity": "ÉLEVÉ",
         "description": "Affectation de mot de passe ou secret via variable d'environnement dans un terminal."
     },
     "Mot de passe passé en commande CLI": {
-        "regex": r"(?i)\b(?:--password[\s=]+|sshpass\s+-p\s*|mysql\s+(?:-[a-zA-Z0-9_]+\s+)*-p)([\"']?[A-Za-z0-9_\-@#$%^&+=!]{6,}[\"']?)",
+        "regex": r"(?i)\b(?:--password[\s=]+|sshpass\s+-p\s*|mysql\s+(?:-[a-zA-Z0-9_]+\s+)*-p)(?:\\?[\"'])?([A-Za-z0-9_\-@#$%^&+=!]{6,})",
         "severity": "MOYEN",
         "description": "Mot de passe transmis directement dans une commande dédiée (ex. sshpass, mysql, --password)."
     },
     "Mot de passe en clair dans le Prompt": {
-        "regex": r"(?i)(?:mon mot de passe est|le mot de passe (?:est|c'est)|mdp\s*[:=]|mot de passe\s*[:=]|my password is|the password is|password\s*[:=])\s*([\"']?[A-Za-z0-9_\-@#$%^&+=!]{6,}[\"']?)",
+        "regex": r"(?i)(?:mon mot de passe est|le mot de passe (?:est|c'est)|mdp\s*[:=]|mot de passe\s*[:=]|my password is|the password is|password\s*[:=])\s*(?:\\?[\"'])?([A-Za-z0-9_\-@#$%^&+=!]{6,})",
         "severity": "ÉLEVÉ",
         "description": "Mot de passe rédigé directement par l'utilisateur dans l'invite de dialogue avec l'IA."
     },
@@ -602,6 +666,10 @@ def load_custom_rules() -> Dict[str, Dict[str, str]]:
             if k.startswith("_") or not isinstance(v, dict):
                 continue
             if "regex" in v and "severity" in v:
+                try:
+                    re.compile(v["regex"])
+                except (re.error, TypeError):
+                    continue  # une regex invalide ne doit pas interrompre tout le scan
                 rules[f"{k} [CUSTOM]"] = {
                     "regex": v["regex"],
                     "severity": v.get("severity", "MOYEN"),
@@ -614,6 +682,8 @@ def load_custom_rules() -> Dict[str, Dict[str, str]]:
 
 def send_desktop_notification(title: str, message: str, severity: str = "normal"):
     """Envoie une notification de bureau native sous Linux / KDE / GNOME ou Windows 10/11."""
+    if os.getenv("AISCOUT_NO_NOTIFY"):
+        return
     if IS_WINDOWS:
         clean_title = title.replace('"', '`"').replace("'", "''")
         clean_msg = message.replace('"', '`"').replace("'", "''").replace("\n", " ")
@@ -657,12 +727,21 @@ def send_desktop_notification(title: str, message: str, severity: str = "normal"
 
 PLACEHOLDER_KEYWORDS = [
     "your_key", "your_token", "your_password", "your_api_key", "your_secret",
-    "example", "placeholder", "dummy", "fake", "xxxx", "00000", "12345", "test",
-    "abcdef", "sk-ant-xxx", "ghp_xxx", "password", "secret", "undefined", "null",
-    "none", "true", "false", "localhost", "admin", "root", "dev", "prod", "change_me",
-    "changeme", "foobar", "redacted", "token_here", "key_here", "sample", "postgres_db",
-    "ostgres", "postgres"
+    "example", "placeholder", "dummy", "fake", "xxxx", "00000", "12345",
+    "abcdef", "sk-ant-xxx", "ghp_xxx", "undefined", "change_me",
+    "changeme", "foobar", "redacted", "token_here", "key_here", "sample", "postgres_db"
 ]
+
+# Mots courts : pertinents pour un mot de passe tapé à la main, mais qu'un jeton aléatoire
+# contient par hasard (« dev » apparaît dans ~0,1 % des PAT GitHub). Ils ne s'appliquent
+# donc pas aux règles intégrées à préfixe fixe.
+WEAK_PLACEHOLDER_KEYWORDS = [
+    "test", "password", "secret", "null", "none", "true", "false", "localhost",
+    "admin", "root", "dev", "prod", "ostgres", "postgres"
+]
+
+# Sous-chaînes des noms de règles dont la valeur est du texte libre (mot de passe, variable).
+FREE_TEXT_RULE_MARKERS = ["Prompt", "CLI", "commande", "sensible", "Base de données"]
 
 COMMON_WORDS_FR_EN = {
     "compromis", "obligatoire", "requis", "introuvable", "invalide", "correct",
@@ -866,6 +945,8 @@ class ScoutEngine:
         self._cwd_cache: Dict[str, str] = {}
 
     def _locate_ripgrep(self) -> Optional[str]:
+        if os.getenv("AISCOUT_DISABLE_RIPGREP"):
+            return None
         system_rg = shutil.which("rg")
         if system_rg:
             return system_rg
@@ -874,7 +955,8 @@ class ScoutEngine:
             return str(cargo_rg)
         return None
 
-    def get_target_directories(self) -> List[Path]:
+    def get_candidate_targets(self) -> List[Path]:
+        """Tous les emplacements connus, qu'ils existent ou non."""
         targets = [
             self.home / ".claude" / "projects",
             self.home / ".claude" / "history.jsonl",
@@ -904,7 +986,10 @@ class ScoutEngine:
             targets.extend([
                 lad / "Programs" / "cursor" / "resources"
             ])
-        return [p for p in targets if p.exists()]
+        return targets
+
+    def get_target_directories(self) -> List[Path]:
+        return [p for p in self.get_candidate_targets() if p.exists()]
 
     def identify_tool(self, file_path: str) -> str:
         fp = str(file_path).lower().replace("\\", "/")
@@ -975,28 +1060,28 @@ class ScoutEngine:
         usage = "Texte consigné en session"
         try:
             data = json.loads(line_clean)
-            if "type" in data:
-                t = data.get("type")
-                if t == "user":
-                    msg = data.get("message", {})
-                    content = msg.get("content", "")
-                    if isinstance(content, list):
-                        for item in content:
-                            if item.get("type") == "tool_result":
-                                usage = "Sortie d'outil exécuté (commande bash, .env ou infisical)"
-                                snip = str(item.get("content", ""))[:200]
-                                return usage, snip
-                    usage = "Message / Prompt utilisateur direct"
-                elif t == "assistant":
-                    usage = "Réponse / Génération de l'assistant IA"
-            elif "step_index" in data:
+        except Exception:
+            data = None
+        if isinstance(data, dict):
+            # Antigravity porte aussi un champ "type" : tester "step_index" en premier.
+            if "step_index" in data:
                 stype = data.get("type")
                 if stype == "USER_INPUT":
                     usage = "Prompt utilisateur Antigravity"
                 elif stype == "PLANNER_RESPONSE":
                     usage = "Raisonnement / Réponse du modèle"
-        except Exception:
-            pass
+            elif data.get("type") == "user":
+                msg = data.get("message")
+                content = msg.get("content", "") if isinstance(msg, dict) else ""
+                if isinstance(content, list):
+                    for item in content:
+                        if isinstance(item, dict) and item.get("type") == "tool_result":
+                            usage = "Sortie d'outil exécuté (commande bash, .env ou infisical)"
+                            snip = str(item.get("content", ""))[:200]
+                            return usage, snip
+                usage = "Message / Prompt utilisateur direct"
+            elif data.get("type") == "assistant":
+                usage = "Réponse / Génération de l'assistant IA"
 
         if "infisical" in line_clean.lower():
             usage = "Sortie de commande Infisical ou dump de secrets"
@@ -1009,26 +1094,30 @@ class ScoutEngine:
         return usage, snippet
 
     def is_valid_secret(self, text: str, category: str = "", full_line: str = "") -> bool:
-        t = text.strip().strip("'\"`")
-        lower_t = t.lower()
+        val = text.strip().strip("'\"`")
+        lower_t = val.lower()
 
-        if len(t) < 6:
+        if len(val) < 6:
             return False
 
-        if t.startswith("$") or t.startswith("<") or t.startswith("{{") or t.startswith("[") or t.startswith("("):
+        if val.startswith("$") or val.startswith("<") or val.startswith("{{") or val.startswith("[") or val.startswith("("):
             return False
-        if t.endswith(">") or t.endswith("]") or t.endswith(")") or t.endswith("}"):
+        if val.endswith(">") or val.endswith("]") or val.endswith(")") or val.endswith("}"):
             return False
 
-        for ph in PLACEHOLDER_KEYWORDS:
+        is_free_text = any(kw in category for kw in FREE_TEXT_RULE_MARKERS)
+        keywords = PLACEHOLDER_KEYWORDS
+        if is_free_text or category not in PATTERNS:
+            keywords = PLACEHOLDER_KEYWORDS + WEAK_PLACEHOLDER_KEYWORDS
+        for ph in keywords:
             if ph in lower_t:
                 return False
-        if re.search(r"^(?:YOUR_|VOTRE_|SAMPLE_|MY_|TEST_|EXAMPLE_)[A-Z0-9_]+$", t, re.IGNORECASE):
+        if re.search(r"^(?:YOUR_|VOTRE_|SAMPLE_|MY_|TEST_|EXAMPLE_)[A-Z0-9_]+$", val, re.IGNORECASE):
             return False
-        if re.search(r"_[A-Z]+_(?:KEY|TOKEN|SECRET|PASSWORD|HERE)$", t, re.IGNORECASE):
+        if re.search(r"_[A-Z]+_(?:KEY|TOKEN|SECRET|PASSWORD|HERE)$", val, re.IGNORECASE):
             return False
 
-        if len(set(lower_t)) <= 2 and len(t) >= 6:
+        if len(set(lower_t)) <= 2 and len(val) >= 6:
             return False
 
         if any(marker in full_line for marker in ["AI SECRET SCOUT", "[REDACTED_BY_AISCOUT]", "FICHE DÉTAILLÉE DU SECRET", "rapport_audit"]):
@@ -1042,112 +1131,173 @@ class ScoutEngine:
             if lower_t in COMMON_WORDS_FR_EN:
                 return False
 
-            classes = count_character_classes(t)
-            entropy = calculate_entropy(t)
+            classes = count_character_classes(val)
+            entropy = calculate_entropy(val)
 
             if classes == 1:
-                if t.isalpha():
+                if val.isalpha():
                     return False
                 if entropy < 3.0:
                     return False
 
-            if classes == 2 and t.istitle() and t.isalpha():
+            if classes == 2 and val.istitle() and val.isalpha():
                 return False
 
         return True
 
+    @staticmethod
+    def rg_compatible_regex(regex: str) -> str:
+        """Retire les assertions (?=…) (?!…) (?<=…) (?<!…), que ripgrep refuse.
+
+        Le motif obtenu est plus large que l'original : ripgrep ne fait que présélectionner
+        les lignes, et la regex complète est réappliquée en Python par _match_line()."""
+        out = []
+        i = 0
+        while i < len(regex):
+            if regex[i] == "\\":
+                out.append(regex[i:i + 2])
+                i += 2
+                continue
+            if regex.startswith(("(?=", "(?!", "(?<=", "(?<!"), i):
+                depth, j, in_class = 0, i, False
+                while j < len(regex):
+                    c = regex[j]
+                    if c == "\\":
+                        j += 2
+                        continue
+                    if in_class:
+                        in_class = c != "]"
+                    elif c == "[":
+                        in_class = True
+                    elif c == "(":
+                        depth += 1
+                    elif c == ")":
+                        depth -= 1
+                        if depth == 0:
+                            break
+                    j += 1
+                i = j + 1
+                continue
+            out.append(regex[i])
+            i += 1
+        return "".join(out)
+
+    def _file_meta(self, fpath: str) -> Tuple[str, str, str]:
+        try:
+            mtime = datetime.fromtimestamp(os.path.getmtime(fpath)).strftime("%Y-%m-%d %H:%M")
+        except OSError:
+            mtime = "Inconnu"
+        return self.identify_tool(fpath), self.resolve_project(fpath), mtime
+
+    def _match_line(self, cat_name: str, conf: Dict[str, str], line: str, fpath: str, lno: int,
+                    tool: str, project: str, mtime: str) -> List[Finding]:
+        """Point unique de correspondance : ripgrep, repli Python et watchdog passent tous ici."""
+        if "ai_secret_scout" in fpath or "scan_secrets" in fpath:
+            return []
+        found = []
+        for m in re.finditer(conf["regex"], line):
+            raw = m.group(1) if m.groups() and m.group(1) is not None else m.group(0)
+            if not self.is_valid_secret(raw, category=cat_name, full_line=line):
+                continue
+            usage, snippet = self.determine_usage_context(line, tool)
+            found.append(Finding(
+                category=cat_name,
+                secret_raw=raw,
+                file_path=fpath,
+                line_no=lno,
+                tool=tool,
+                project=project,
+                usage_context=usage,
+                snippet=snippet,
+                timestamp=mtime,
+                severity=conf.get("severity", "MOYEN"),
+                description=conf.get("description", "")
+            ))
+        return found
+
+    def _scan_file(self, fpath: str, patterns: Dict[str, Dict[str, str]],
+                   tool: str, project: str, mtime: str) -> List[Finding]:
+        found = []
+        try:
+            with open(fpath, "r", encoding="utf-8", errors="ignore") as f:
+                for lno, line in enumerate(f, 1):
+                    for cat_name, conf in patterns.items():
+                        found.extend(self._match_line(cat_name, conf, line, fpath, lno, tool, project, mtime))
+        except OSError:
+            pass
+        return found
+
+    @staticmethod
+    def _list_scan_files(targets: List[str]) -> List[str]:
+        files = []
+        for target in targets:
+            tp = Path(target)
+            if tp.is_file():
+                files.append(target)
+            elif tp.is_dir():
+                for root, _, names in os.walk(tp):
+                    for name in names:
+                        if name.endswith((".jsonl", ".json", ".md")):
+                            files.append(os.path.join(root, name))
+        return files
+
+    def _rg_search(self, regex: str, targets: List[str]) -> Optional[List[Tuple[str, int, str]]]:
+        """Lignes trouvées par ripgrep, ou None si ripgrep refuse la regex."""
+        cmd = [self.rg_path, "--null", "-H", "-n", "--no-heading", "--no-messages",
+               "--glob", "!*.bak", "--glob", "!*.backup",
+               "-e", self.rg_compatible_regex(regex)] + targets
+        proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+        if proc.returncode == 2 and not proc.stdout and "regex" in proc.stderr.lower():
+            return None
+        results = []
+        # --null sépare le chemin par un octet nul : un « : » dans le chemin (C:\ sous Windows)
+        # ne décale plus le découpage. split("\n") et non splitlines(), qui coupe aussi sur
+        # U+2028 ou \x0c présents dans le contenu.
+        for record in proc.stdout.split("\n"):
+            fpath, sep, rest = record.partition("\0")
+            if not sep:
+                continue
+            lno_str, _, content = rest.partition(":")
+            try:
+                lno = int(lno_str)
+            except ValueError:
+                lno = 0
+            results.append((fpath, lno, content.rstrip("\r")))
+        return results
+
     def scan(self, progress_callback=None) -> List[Finding]:
         self.findings = []
-        targets = [str(t) for t in self.get_target_directories()]
+        targets = [str(p) for p in self.get_target_directories()]
         if not targets:
             return []
 
+        meta_cache: Dict[str, Tuple[str, str, str]] = {}
+
+        def meta(fpath: str) -> Tuple[str, str, str]:
+            if fpath not in meta_cache:
+                meta_cache[fpath] = self._file_meta(fpath)
+            return meta_cache[fpath]
+
+        python_patterns = dict(self.patterns)
         if self.rg_path:
+            python_patterns = {}
             total_cats = len(self.patterns)
             for idx, (cat_name, conf) in enumerate(self.patterns.items(), 1):
                 if progress_callback:
                     progress_callback(idx, total_cats, f"Analyse : {cat_name}")
-                cmd = [self.rg_path, "-H", "-n", "--no-heading", "--no-messages", "--glob", "!*.bak", "--glob", "!*.backup", "-e", conf["regex"]] + targets
-                proc = subprocess.run(cmd, capture_output=True, text=True, errors="replace")
-                for line in proc.stdout.splitlines():
-                    if not line:
-                        continue
-                    parts = line.split(":", 2)
-                    if len(parts) < 3:
-                        continue
-                    fpath, lno_str, content = parts[0], parts[1], parts[2]
-                    if "ai_secret_scout" in fpath or "scan_secrets" in fpath:
-                        continue
-                    try:
-                        lno = int(lno_str)
-                    except ValueError:
-                        lno = 0
+                hits = self._rg_search(conf["regex"], targets)
+                if hits is None:
+                    python_patterns[cat_name] = conf
+                    continue
+                for fpath, lno, content in hits:
+                    self.findings.extend(self._match_line(cat_name, conf, content, fpath, lno, *meta(fpath)))
 
-                    for m in re.finditer(conf["regex"], content):
-                        raw = m.group(1) if m.groups() else m.group(0)
-                        if not self.is_valid_secret(raw, category=cat_name, full_line=content):
-                            continue
-                        tool = self.identify_tool(fpath)
-                        project = self.resolve_project(fpath)
-                        usage, snippet = self.determine_usage_context(content, tool)
-                        try:
-                            mtime = datetime.fromtimestamp(os.path.getmtime(fpath)).strftime("%Y-%m-%d %H:%M")
-                        except Exception:
-                            mtime = "Inconnu"
-
-                        self.findings.append(Finding(
-                            category=cat_name,
-                            secret_raw=raw,
-                            file_path=fpath,
-                            line_no=lno,
-                            tool=tool,
-                            project=project,
-                            usage_context=usage,
-                            snippet=snippet,
-                            timestamp=mtime,
-                            severity=conf.get("severity", "MOYEN"),
-                            description=conf.get("description", "")
-                        ))
-        else:
-            all_files = []
-            for t in targets:
-                tp = Path(t)
-                if tp.is_file():
-                    all_files.append(tp)
-                elif tp.is_dir():
-                    for root, _, files in os.walk(tp):
-                        for f in files:
-                            if f.endswith((".jsonl", ".json", ".md")) and not f.endswith((".bak", ".backup")):
-                                all_files.append(Path(root) / f)
-
+        if python_patterns:
+            all_files = self._list_scan_files(targets)
             for idx, fpath in enumerate(all_files, 1):
                 if progress_callback and idx % 10 == 0:
-                    progress_callback(idx, len(all_files), f"Lecture : {fpath.name}")
-                try:
-                    with open(fpath, "r", encoding="utf-8", errors="ignore") as f:
-                        for lno, line in enumerate(f, 1):
-                            for cat_name, conf in self.patterns.items():
-                                for m in re.finditer(conf["regex"], line):
-                                    raw = m.group(1) if m.groups() else m.group(0)
-                                    if not self.is_valid_secret(raw, category=cat_name, full_line=line):
-                                        continue
-                                    tool = self.identify_tool(str(fpath))
-                                    project = self.resolve_project(str(fpath))
-                                    usage, snippet = self.determine_usage_context(line, tool)
-                                    self.findings.append(Finding(
-                                        category=cat_name,
-                                        secret_raw=raw,
-                                        file_path=str(fpath),
-                                        line_no=lno,
-                                        tool=tool,
-                                        project=project,
-                                        usage_context=usage,
-                                        snippet=snippet,
-                                        severity=conf.get("severity", "MOYEN"),
-                                        description=conf.get("description", "")
-                                    ))
-                except Exception:
-                    continue
+                    progress_callback(idx, len(all_files), f"Lecture : {Path(fpath).name}")
+                self.findings.extend(self._scan_file(fpath, python_patterns, *meta(fpath)))
 
         dedup_map: Dict[Tuple[str, str, str, int], Finding] = {}
         for f in self.findings:
@@ -1159,71 +1309,43 @@ class ScoutEngine:
 
     def scan_single_file(self, fpath: Path) -> List[Finding]:
         """Analyse unitairement un fichier pour y détecter des secrets."""
-        if not fpath.exists() or not fpath.is_file() or str(fpath).endswith((".bak", ".backup")):
+        if not fpath.is_file() or str(fpath).endswith((".bak", ".backup")):
             return []
-        findings = []
-        tool = self.identify_tool(str(fpath))
-        project = self.resolve_project(str(fpath))
-        try:
-            mtime = datetime.fromtimestamp(os.path.getmtime(fpath)).strftime("%Y-%m-%d %H:%M:%S")
-        except Exception:
-            mtime = "Inconnu"
-
-        try:
-            with open(fpath, "r", encoding="utf-8", errors="ignore") as f:
-                for lno, line in enumerate(f, 1):
-                    for cat_name, conf in self.patterns.items():
-                        for m in re.finditer(conf["regex"], line):
-                            raw = m.group(1) if m.groups() else m.group(0)
-                            if not self.is_valid_secret(raw, category=cat_name, full_line=line):
-                                continue
-                            usage, snippet = self.determine_usage_context(line, tool)
-                            findings.append(Finding(
-                                category=cat_name,
-                                secret_raw=raw,
-                                file_path=str(fpath),
-                                line_no=lno,
-                                tool=tool,
-                                project=project,
-                                usage_context=usage,
-                                snippet=snippet,
-                                timestamp=mtime,
-                                severity=conf.get("severity", "MOYEN"),
-                                description=conf.get("description", "")
-                            ))
-        except Exception:
-            pass
-        return findings
+        return self._scan_file(str(fpath), self.patterns, *self._file_meta(str(fpath)))
 
     def redact_secret(self, finding: Finding) -> bool:
+        """Remplace toutes les occurrences du secret. True si le fichier n'en contient plus."""
         target = Path(finding.file_path)
-        if not target.exists():
+        if not finding.secret_raw or finding.secret_raw == "[REDACTED_BY_AISCOUT]" or not target.is_file():
             return False
-        backup_file = target.with_suffix(target.suffix + ".bak")
-        if not backup_file.exists():
-            shutil.copy2(target, backup_file)
+        needle = finding.secret_raw.encode("utf-8")
         try:
-            with open(target, "r", encoding="utf-8", errors="ignore") as f:
-                content = f.read()
-            new_content = content.replace(finding.secret_raw, "[REDACTED_BY_AISCOUT]")
-            with open(target, "w", encoding="utf-8") as f:
-                f.write(new_content)
+            # En octets : les séquences non UTF-8 et les fins de ligne restent intactes.
+            content = target.read_bytes()
+            if needle not in content:
+                return True
+            backup_file = target.with_name(target.name + ".bak")
+            if not backup_file.exists():
+                shutil.copy2(target, backup_file)
+            target.write_bytes(content.replace(needle, b"[REDACTED_BY_AISCOUT]"))
             return True
-        except Exception:
+        except OSError:
             return False
 
     def list_backups(self) -> List[Path]:
         """Recherche et liste tous les fichiers de sauvegarde .bak dans les répertoires d'IA."""
         backups = []
-        targets = self.get_target_directories()
-        for t in targets:
-            if t.is_file() and str(t).endswith(".bak"):
-                backups.append(t)
-            elif t.is_dir():
-                for root, _, files in os.walk(t):
+        for target in self.get_candidate_targets():
+            if target.is_dir():
+                for root, _, files in os.walk(target):
                     for f in files:
                         if f.endswith(".bak"):
                             backups.append(Path(root) / f)
+            else:
+                # Cible fichier (history.jsonl…) : sa sauvegarde est posée à côté.
+                bak = target.with_name(target.name + ".bak")
+                if bak.is_file():
+                    backups.append(bak)
         backups.sort(key=lambda p: os.path.getmtime(p) if p.exists() else 0, reverse=True)
         return backups
 
@@ -1340,13 +1462,13 @@ class ScoutTUI:
         lines = []
         lines.append(self.build_top_bar(width))
         lines.append("")
-        lines.append(self.center_line(f"{C.YELLOW}{C.BOLD}⚠️  CONFIRMATION{C.RESET}", width))
+        lines.append(self.center_line(f"{C.YELLOW}{C.BOLD}{t('confirm_title')}{C.RESET}", width))
         lines.append("")
         lines.append(self.center_line(f"{C.WHITE}{question}{C.RESET}", width))
         while len(lines) < height - 1:
             lines.append("")
         lines = lines[:height - 1]
-        lines.append(self.build_bottom_bar(width, "[O/Y] Confirmer / Yes  │  [Annuler / Any other key]"))
+        lines.append(self.build_bottom_bar(width, t("confirm_bottom")))
         sys.stdout.write("\033[H" + "\n".join(lines))
         sys.stdout.flush()
         k = read_key()
@@ -1363,7 +1485,7 @@ class ScoutTUI:
         while len(lines) < height - 1:
             lines.append("")
         lines = lines[:height - 1]
-        lines.append(self.build_bottom_bar(width, "[Enter] / [Space] to continue"))
+        lines.append(self.build_bottom_bar(width, t("continue_hint")))
         sys.stdout.write("\033[H" + "\n".join(lines))
         sys.stdout.flush()
         while read_key() not in ("ENTER", "SPACE", "ESC"):
@@ -1457,9 +1579,9 @@ class ScoutTUI:
             if self.active_filter_tool or self.active_filter_project:
                 filts = []
                 if self.active_filter_tool:
-                    filts.append(f"Tool: {self.active_filter_tool}")
+                    filts.append(f"{t('filter_tool_lbl')}: {self.active_filter_tool}")
                 if self.active_filter_project:
-                    filts.append(f"Project: {self.active_filter_project}")
+                    filts.append(f"{t('filter_project_lbl')}: {self.active_filter_project}")
                 lines_buffer.append(self.center_line(f"{C.MAGENTA}{t('filter_active', filts=', '.join(filts), count=len(self.get_filtered_findings()))}{C.RESET}", width))
             elif height >= 30:
                 lines_buffer.append("")
@@ -1663,7 +1785,7 @@ class ScoutTUI:
                 while len(lines) < height - 1:
                     lines.append("")
                 lines = lines[:height - 1]
-                hint = "[Backspace/Esc] Clear search │ [Q] Back" if self.search_query else "[Esc] / [Q] Return to dashboard"
+                hint = t("table_empty_search_hint") if self.search_query else t("table_empty_hint")
                 lines.append(self.build_bottom_bar(width, hint))
                 sys.stdout.write("\033[H" + "\n".join(lines))
                 sys.stdout.flush()
@@ -1857,8 +1979,8 @@ class ScoutTUI:
         lines.append("")
         lines.append(self.center_line(f"{C.RED}{C.BOLD}{t('confirm_redact_title')}{C.RESET}", width))
         lines.append("")
-        lines.append(self.center_line(f"File   : {item.file_path}", width))
-        lines.append(self.center_line(f"Line   : {item.line_no}", width))
+        lines.append(self.center_line(f"{t('redact_file_lbl'):<7}: {item.file_path}", width))
+        lines.append(self.center_line(f"{t('redact_line_lbl'):<7}: {item.line_no}", width))
         lines.append(self.center_line(f"{C.YELLOW}{t('confirm_redact_replace')}{C.RESET}", width))
         lines.append(self.center_line(f"{C.GREEN}{t('confirm_redact_bak')}{C.RESET}", width))
         while len(lines) < height - 1:
@@ -1883,7 +2005,7 @@ class ScoutTUI:
                 while len(lines) < height - 1:
                     lines.append("")
                 lines = lines[:height - 1]
-                lines.append(self.build_bottom_bar(width, "[Enter] / [Space] to continue"))
+                lines.append(self.build_bottom_bar(width, t("continue_hint")))
                 sys.stdout.write("\033[H" + "\n".join(lines))
                 sys.stdout.flush()
                 while read_key() not in ("ENTER", "ESC", "SPACE"):
@@ -1898,21 +2020,21 @@ class ScoutTUI:
         lines = []
         lines.append(self.build_top_bar(width))
         lines.append("")
-        lines.append(self.center_line(f"{C.MAGENTA}{C.BOLD}🏷️  GESTION DES FILTRES PAR OUTIL IA{C.RESET}", width))
+        lines.append(self.center_line(f"{C.MAGENTA}{C.BOLD}{t('filter_title')}{C.RESET}", width))
         lines.append("")
 
-        for i, t in enumerate(tools, 1):
-            act = f"{C.GREEN}(ACTIF){C.RESET}" if self.active_filter_tool == t else ""
-            lines.append(f"    [{i}] {t} {act}")
+        for i, tool_name in enumerate(tools, 1):
+            act = f"{C.GREEN}{t('filter_active_tag')}{C.RESET}" if self.active_filter_tool == tool_name else ""
+            lines.append(f"    [{i}] {tool_name} {act}")
 
         lines.append("")
-        lines.append("    [R] Réinitialiser tous les filtres")
-        lines.append("    [Q] Retour au menu principal")
+        lines.append(f"    {t('filter_reset')}")
+        lines.append(f"    {t('filter_back')}")
 
         while len(lines) < height - 1:
             lines.append("")
         lines = lines[:height - 1]
-        lines.append(self.build_bottom_bar(width, "Sélectionnez un numéro [1-N], [R] pour réinitialiser ou [Q] pour retour"))
+        lines.append(self.build_bottom_bar(width, t("filter_bottom")))
 
         sys.stdout.write("\033[H" + "\n".join(lines))
         sys.stdout.flush()
@@ -1937,16 +2059,16 @@ class ScoutTUI:
         lines = []
         lines.append(self.build_top_bar(width))
         lines.append("")
-        lines.append(self.center_line(f"{C.BLUE}{C.BOLD}💾 EXPORTER LE DOSSIER D'AUDIT COMPLET{C.RESET}", width))
+        lines.append(self.center_line(f"{C.BLUE}{C.BOLD}{t('export_title')}{C.RESET}", width))
         lines.append("")
-        lines.append(f"    [1] Exporter en Markdown : {C.CYAN}{md_dest.name}{C.RESET}")
-        lines.append(f"    [2] Exporter en JSON     : {C.CYAN}{json_dest.name}{C.RESET}")
-        lines.append("    [Q] Annuler et revenir au menu")
+        lines.append(f"    {t('export_md', name=C.CYAN + md_dest.name + C.RESET)}")
+        lines.append(f"    {t('export_json', name=C.CYAN + json_dest.name + C.RESET)}")
+        lines.append(f"    {t('export_cancel')}")
 
         while len(lines) < height - 1:
             lines.append("")
         lines = lines[:height - 1]
-        lines.append(self.build_bottom_bar(width, "Appuyez sur [1] ou [2] pour exporter, ou [Q] pour annuler"))
+        lines.append(self.build_bottom_bar(width, t("export_bottom")))
 
         sys.stdout.write("\033[H" + "\n".join(lines))
         sys.stdout.flush()
@@ -1958,11 +2080,11 @@ class ScoutTUI:
                 anim_lines = []
                 anim_lines.append(self.build_top_bar(width))
                 anim_lines.append("")
-                anim_lines.append(self.center_line(f"{C.CYAN}{C.BOLD}{f} Génération du dossier d'audit en cours...{C.RESET}", width))
+                anim_lines.append(self.center_line(f"{C.CYAN}{C.BOLD}{f} {t('export_progress')}{C.RESET}", width))
                 while len(anim_lines) < height - 1:
                     anim_lines.append("")
                 anim_lines = anim_lines[:height - 1]
-                anim_lines.append(self.build_bottom_bar(width, "Écriture des données sécurisées..."))
+                anim_lines.append(self.build_bottom_bar(width, t("export_writing")))
                 sys.stdout.write("\033[H" + "\n".join(anim_lines))
                 sys.stdout.flush()
                 time.sleep(0.05)
@@ -1976,13 +2098,13 @@ class ScoutTUI:
             lines = []
             lines.append(self.build_top_bar(width))
             lines.append("")
-            lines.append(self.center_line(f"{C.GREEN}{C.BOLD}✔ RAPPORT D'AUDIT EXPORTÉ AVEC SUCCÈS !{C.RESET}", width))
-            lines.append(self.center_line(f"{C.WHITE}Fichier : {C.CYAN}{target}{C.RESET}", width))
-            lines.append(self.center_line(f"{C.YELLOW}Total de secrets consignés : {len(items)}{C.RESET}", width))
+            lines.append(self.center_line(f"{C.GREEN}{C.BOLD}{t('export_done')}{C.RESET}", width))
+            lines.append(self.center_line(f"{C.WHITE}{t('export_file', path=C.CYAN + str(target) + C.RESET)}", width))
+            lines.append(self.center_line(f"{C.YELLOW}{t('export_total', count=len(items))}{C.RESET}", width))
             while len(lines) < height - 1:
                 lines.append("")
             lines = lines[:height - 1]
-            lines.append(self.build_bottom_bar(width, "[Entrée] ou [Espace] pour revenir au menu"))
+            lines.append(self.build_bottom_bar(width, t("export_return")))
             sys.stdout.write("\033[H" + "\n".join(lines))
             sys.stdout.flush()
             while read_key() not in ("ENTER", "SPACE", "ESC"):
@@ -2101,7 +2223,7 @@ class ScoutTUI:
             while len(lines) < height - 1:
                 lines.append("")
             lines = lines[:height - 1]
-            lines.append(self.build_bottom_bar(width, "[Enter] / [Space] to return to dashboard"))
+            lines.append(self.build_bottom_bar(width, t("scan_return_hint")))
             sys.stdout.write("\033[H" + "\n".join(lines))
             sys.stdout.flush()
             while read_key() not in ("ENTER", "SPACE", "ESC"):
@@ -2128,7 +2250,7 @@ class ScoutTUI:
                 while len(lines) < height - 1:
                     lines.append("")
                 lines = lines[:height - 1]
-                lines.append(self.build_bottom_bar(width, "[Enter] / [Esc] Return to dashboard"))
+                lines.append(self.build_bottom_bar(width, t("scan_return_hint")))
                 sys.stdout.write("\033[H" + "\n".join(lines))
                 sys.stdout.flush()
                 while read_key() not in ("ENTER", "ESC", "SPACE", "q", "Q"):
@@ -2194,43 +2316,50 @@ class ScoutTUI:
                 selected_bak_idx = min(len(backups) - 1, selected_bak_idx + 1)
             elif key in ("r", "R"):
                 target_bak = backups[selected_bak_idx]
-                if self.confirm_action(f"Restore {target_bak.stem} from backup copy?"):
+                if self.confirm_action(t("bak_confirm_one", name=target_bak.stem)):
                     if self.engine.restore_backup(target_bak):
-                        self.show_flash_message(f"✔ {target_bak.stem} restored successfully!", C.GREEN)
+                        self.show_flash_message(t("bak_restored_one", name=target_bak.stem), C.GREEN)
                     else:
-                        self.show_flash_message("❌ Restoration failed.", C.RED)
+                        self.show_flash_message(t("bak_restore_failed"), C.RED)
             elif key in ("a", "A"):
-                if self.confirm_action(f"Restore all {len(backups)} backup files?"):
+                if self.confirm_action(t("bak_confirm_all", count=len(backups))):
                     cnt = self.engine.restore_all_backups()
-                    self.show_flash_message(f"✔ {cnt} file(s) restored successfully!", C.GREEN)
+                    self.show_flash_message(t("bak_restored_all", count=cnt), C.GREEN)
             elif key in ("p", "P"):
-                if self.confirm_action(f"⚠️ PERMANENTLY PURGE all {len(backups)} backup (.bak) files?"):
+                if self.confirm_action(t("bak_confirm_purge", count=len(backups))):
                     cnt = self.engine.clean_backups()
-                    self.show_flash_message(f"✔ {cnt} .bak file(s) permanently deleted.", C.GREEN)
+                    self.show_flash_message(t("bak_purged", count=cnt), C.GREEN)
             elif key in ("q", "Q", "ESC"):
                 break
 
     # --- SURVEILLANCE EN TEMPS RÉEL (WATCHDOG DÉDIÉ) ---
+    @staticmethod
+    def _list_watched_files(targets: List[Path]) -> List[Path]:
+        files = []
+        for target in targets:
+            if target.is_file():
+                files.append(target)
+            elif target.is_dir():
+                for root, _, names in os.walk(target):
+                    for name in names:
+                        if not name.endswith((".bak", ".backup")):
+                            files.append(Path(root) / name)
+        return files
+
     def run_watchdog_screen(self):
         targets = self.engine.get_target_directories()
         known_mtimes: Dict[str, float] = {}
 
         # Scan initial des mtimes des fichiers surveillés
-        for t in targets:
-            if t.is_file():
-                try:
-                    known_mtimes[str(t)] = t.stat().st_mtime
-                except Exception:
-                    pass
-            elif t.is_dir():
-                for root, _, files in os.walk(t):
-                    for f in files:
-                        if not f.endswith((".bak", ".backup")):
-                            fp = Path(root) / f
-                            try:
-                                known_mtimes[str(fp)] = fp.stat().st_mtime
-                            except Exception:
-                                pass
+        for fp in self._list_watched_files(targets):
+            try:
+                known_mtimes[str(fp)] = fp.stat().st_mtime
+            except OSError:
+                pass
+
+        # Un secret n'est signalé qu'une fois : les sessions IA sont réécrites en continu,
+        # et chaque modification rescanne le fichier entier.
+        alerted = {(f.category, f.secret_raw, f.file_path) for f in self.findings}
 
         events_log: List[str] = [
             f"{C.GRAY}[{datetime.now().strftime('%H:%M:%S')}] {t('watchdog_started', files=len(known_mtimes))}{C.RESET}"
@@ -2239,10 +2368,13 @@ class ScoutTUI:
         scans_count = 0
         pulse = False
 
-        if not IS_WINDOWS:
+        # Hors terminal (service, redirection), pas de lecture clavier : arrêt par signal.
+        interactive = sys.stdin.isatty()
+        if interactive and not IS_WINDOWS:
             fd = sys.stdin.fileno()
             old_term = termios.tcgetattr(fd)
-            tty.setraw(fd)
+            # cbreak et non raw : raw coupe OPOST, et chaque "\n" affiché décalerait l'écran en escalier.
+            tty.setcbreak(fd)
 
         try:
             while True:
@@ -2302,7 +2434,9 @@ class ScoutTUI:
 
                 # Attente non-bloquante d'une frappe clavier (1.0 seconde)
                 interrupted = False
-                if IS_WINDOWS:
+                if not interactive:
+                    time.sleep(1.0)
+                elif IS_WINDOWS:
                     for _ in range(10):
                         if msvcrt.kbhit():
                             ch = msvcrt.getwch()
@@ -2320,22 +2454,12 @@ class ScoutTUI:
                     break
 
                 # Analyse des répertoires pour détecter fichiers nouveaux ou modifiés
-                current_files = []
-                for t in targets:
-                    if t.is_file():
-                        current_files.append(t)
-                    elif t.is_dir():
-                        for root, _, files in os.walk(t):
-                            for f in files:
-                                if not f.endswith((".bak", ".backup")):
-                                    current_files.append(Path(root) / f)
-
                 now_ts = datetime.now().strftime("%H:%M:%S")
-                for cp in current_files:
+                for cp in self._list_watched_files(targets):
                     sp = str(cp)
                     try:
                         mtime = cp.stat().st_mtime
-                    except Exception:
+                    except OSError:
                         continue
 
                     # Nouveau fichier ou modification détectée
@@ -2344,7 +2468,13 @@ class ScoutTUI:
                         known_mtimes[sp] = mtime
                         scans_count += 1
 
-                        new_findings = self.engine.scan_single_file(cp)
+                        file_findings = self.engine.scan_single_file(cp)
+                        new_findings = []
+                        for f in file_findings:
+                            key = (f.category, f.secret_raw, f.file_path)
+                            if key not in alerted:
+                                alerted.add(key)
+                                new_findings.append(f)
                         if new_findings:
                             alerts_count += len(new_findings)
                             for f in new_findings:
@@ -2360,7 +2490,7 @@ class ScoutTUI:
                                 sys.stdout.write("\a")
                                 sys.stdout.flush()
                                 self.findings.append(f)
-                        else:
+                        elif not file_findings:
                             action_name = t("watchdog_act_creation") if is_new else t("watchdog_act_modification")
                             events_log.append(f"{C.GRAY}[{now_ts}] {t('watchdog_clean_log', act=action_name, file=cp.name)}{C.RESET}")
 
@@ -2368,7 +2498,7 @@ class ScoutTUI:
                     events_log = events_log[-50:]
 
         finally:
-            if not IS_WINDOWS:
+            if interactive and not IS_WINDOWS:
                 termios.tcsetattr(fd, termios.TCSADRAIN, old_term)
 
 

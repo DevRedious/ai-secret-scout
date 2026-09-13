@@ -9,7 +9,7 @@
        ◈  A I   S E C R E T   S C O U T  ◈
   </pre>
 
-  <h2>AI Secret Scout (<code>aiscout</code>) — v2.4.4</h2>
+  <h2>AI Secret Scout (<code>aiscout</code>) — v2.4.5</h2>
 
   <p align="center">
     <!-- Ligne 1 : badges techno & plateforme -->
@@ -186,7 +186,7 @@ Le moteur TUI autonome d'`aiscout` (pure bibliothèque standard Python) s'adapte
 ### 1. Tableau de bord & Menu d'accueil interactif (Hub central)
 
 ```text
- ◈ AISCOUT v2.4.4 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
+ ◈ AISCOUT v2.4.5 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
 
                  █████╗ ██╗   ███████╗ ██████╗ ██████╗ ██╗   ██╗████████╗
                 ██╔══██╗██║   ██╔════╝██╔════╝██╔═══██╗██║   ██║╚══██╔══╝
@@ -222,7 +222,7 @@ Le moteur TUI autonome d'`aiscout` (pure bibliothèque standard Python) s'adapte
 La vue tableau permet de parcourir l'intégralité des fuites identifiées avec pagination fluide, tri multi-critères et recherche plein texte instantanée :
 
 ```text
- ◈ AISCOUT v2.4.4 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
+ ◈ AISCOUT v2.4.5 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
 
    📋 EXPLORATEUR DE SECRETS (1/21) — Mode : MASQUÉ 🛡️ │ Tri : Sévérité (🔴 > 🟡 > 🔵)
 
@@ -243,7 +243,7 @@ La vue tableau permet de parcourir l'intégralité des fuites identifiées avec 
 En appuyant sur `/`, une boîte de saisie inline s'ouvre sur la barre inférieure. Le tableau se met à jour en temps réel (filtre instantané sur la catégorie, l'outil, le projet, le fichier ou la valeur du secret) :
 
 ```text
- ◈ AISCOUT v2.4.4 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
+ ◈ AISCOUT v2.4.5 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
 
    📋 EXPLORATEUR DE SECRETS (1/3) — Mode : MASQUÉ 🛡️ │ Tri : Sévérité (🔴 > 🟡 > 🔵)
          🔍 Recherche active : "github" (3 secrets trouvés) │ [Backspace/Esc] Effacer 
@@ -263,7 +263,7 @@ En appuyant sur `/`, une boîte de saisie inline s'ouvre sur la barre inférieur
 En pressant `Entrée` sur une ligne du tableau, une fiche d'audit chirurgicale s'affiche avec le contexte exact d'usage et l'extrait de log :
 
 ```text
- ◈ AISCOUT v2.4.4 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
+ ◈ AISCOUT v2.4.5 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
 
    ╭──────────────────────────────────────────────────────────────────────────────────╮
    │  FICHE D'AUDIT DU SECRET DÉTECTÉ                                                 │
@@ -292,7 +292,7 @@ En pressant `Entrée` sur une ligne du tableau, une fiche d'audit chirurgicale s
 Lors de l'audit initial, du caviardage ou de l'exportation des dossiers d'audit, une animation à 100ms affiche l'étape en cours et la progression :
 
 ```text
- ◈ AISCOUT v2.4.4 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
+ ◈ AISCOUT v2.4.5 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
 
                  █████╗ ██╗   ███████╗ ██████╗ ██████╗ ██╗   ██╗████████╗
                 ██╔══██╗██║   ██╔════╝██╔════╝██╔═══██╗██║   ██║╚══██╔══╝
@@ -328,7 +328,7 @@ Lors de l'audit initial, du caviardage ou de l'exportation des dossiers d'audit,
 Le mode **Watchdog** transforme `aiscout` en un gardien silencieux en arrière-plan :
 
 ```text
- ◈ AISCOUT v2.4.4 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:21
+ ◈ AISCOUT v2.4.5 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:21
 
              📡 SURVEILLANCE EN TEMPS RÉEL (WATCHDOG)  │  🟢 [VEILLE ACTIVE]
        Détecte les sessions IA en écriture et notifie instantanément sur le bureau (Linux / Windows)
@@ -359,7 +359,7 @@ Le mode **Watchdog** transforme `aiscout` en un gardien silencieux en arrière-p
 Le menu `[7]` offre un contrôle absolu sur les fichiers de sauvegarde générés lors des opérations de caviardage :
 
 ```text
- ◈ AISCOUT v2.4.4 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:22
+ ◈ AISCOUT v2.4.5 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:22
 
              ↩️  GESTIONNAIRE DES SAUVEGARDES & RESTAURATION (.BAK)
           Restaurer les fichiers originaux avant caviardage ou purger les sauvegardes.
@@ -400,7 +400,7 @@ Le menu `[7]` offre un contrôle absolu sur les fichiers de sauvegarde généré
 | **GitHub Token (PAT / Fine-Grained)** | 🔴 **CRITIQUE** | `ghp_[A-Za-z0-9]{36}`, `github_pat_[A-Za-z0-9_]{82}` |
 | **GitLab Personal Access Token** *(Nouveau)* | 🔴 **CRITIQUE** | `glpat-[0-9a-zA-Z_\-]{20,}` |
 | **HuggingFace Token** *(Nouveau)* | 🔴 **CRITIQUE** | `hf_[a-zA-Z0-9]{34,}` |
-| **Clé Privée (SSH / RSA / ECC / PEM)** | 🔴 **CRITIQUE** | `-----BEGIN (?:OPENSSH\|RSA\|EC) PRIVATE KEY-----` |
+| **Clé Privée (SSH / RSA / ECC / PEM)** | 🔴 **CRITIQUE** | `-----BEGIN (?:OPENSSH\|RSA\|DSA\|EC\|ENCRYPTED\|PGP)? PRIVATE KEY-----` |
 | **Stripe Secret Key** | 🔴 **CRITIQUE** | `sk_live_[0-9a-zA-Z]{24,}`, `rk_live_[0-9a-zA-Z]{24,}` |
 | **Base de données (URI avec MDP)** | 🔴 **CRITIQUE** | `postgres://user:password@host`, `mysql://...`, `mongodb://...` |
 | **Infisical / Coolify Token** | 🔴 **CRITIQUE** | `st.[a-f0-9]{24}.[a-f0-9]{64}`, `inf_sec_...`, `inf_tok_...` |
