@@ -8,7 +8,7 @@ const { checkPythonVersion } = require("../bin/check-environment");
 const ROOT = path.join(__dirname, "..");
 const LAUNCHER = path.join(ROOT, "bin", "aiscout.js");
 const SCRIPT = path.join(ROOT, "ai_secret_scout.py");
-const PYTHON = checkPythonVersion().cmd;
+const PYTHON = checkPythonVersion().executable;
 
 const hasRipgrep = spawnSync("rg", ["--version"]).status === 0;
 
@@ -21,7 +21,8 @@ const SCAN_MODES = [
 // Faux $HOME : le scan ne lit jamais les vrais historiques, et rules.json est créé ici.
 // `files` associe un chemin relatif à ses lignes (objet sérialisé en JSON, ou texte brut).
 function makeHome(files) {
-	const home = fs.mkdtempSync(path.join(os.tmpdir(), "aiscout-test-"));
+	// L'espace dans le nom vérifie que le lanceur transmet les chemins sans les couper.
+	const home = fs.mkdtempSync(path.join(os.tmpdir(), "aiscout test-"));
 	for (const [rel, lines] of Object.entries(files)) {
 		const file = path.join(home, ...rel.split("/"));
 		fs.mkdirSync(path.dirname(file), { recursive: true });

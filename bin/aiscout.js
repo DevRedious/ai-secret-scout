@@ -9,10 +9,10 @@ const pyCmd = runCheck();
 
 const pyScript = path.join(__dirname, "..", "ai_secret_scout.py");
 
+// Sans shell : les arguments sont transmis tels quels (espaces, guillemets), y compris sous Windows.
 const child = spawn(pyCmd, [pyScript, ...process.argv.slice(2)], {
 	stdio: "inherit",
 	env: process.env,
-	shell: process.platform === "win32",
 });
 
 child.on("error", (err) => {

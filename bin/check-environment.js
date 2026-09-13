@@ -31,14 +31,19 @@ function checkPythonVersion() {
 
 	for (const cmd of candidates) {
 		try {
-			const output = execSync(
-				`${cmd} -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}')"`,
+			// sys.executable donne le chemin réel de l'interpréteur : le lanceur peut
+			// ainsi l'exécuter sans shell, même derrière un shim .bat (pyenv-win).
+			const [output, executable] = execSync(
+				`${cmd} -c "import sys; print('.'.join(map(str, sys.version_info[:3]))); print(sys.executable)"`,
 				{
 					encoding: "utf-8",
 					stdio: ["pipe", "pipe", "ignore"],
 					timeout: 3000,
 				},
-			).trim();
+			)
+				.trim()
+				.split(/\r?\n/)
+				.map((line) => line.trim());
 
 			const parts = output.split(".").map((n) => parseInt(n, 10));
 			const major = parts[0];
@@ -48,6 +53,7 @@ function checkPythonVersion() {
 				return {
 					ok: true,
 					cmd,
+					executable: executable || cmd,
 					version: output,
 					tooOld: false,
 				};
@@ -158,7 +164,7 @@ function runCheck() {
 		process.exit(1);
 	}
 
-	return pyStatus.cmd;
+	return pyStatus.executable;
 }
 
 if (require.main === module) {
