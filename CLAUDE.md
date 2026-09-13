@@ -10,7 +10,7 @@ Il est distribué comme paquet npm, mais **tout le moteur est un unique script P
 (`ai_secret_scout.py`, stdlib uniquement, Python ≥ 3.10). Le JavaScript de `bin/` ne sert qu'à lancer ce script.
 
 Dépôt public : https://github.com/DevRedious/ai-secret-scout — paquet npm `ai-secret-scout` (compte `devredious`).
-La CI GitHub Actions (`.github/workflows/ci.yml`) lance Biome, puis les tests sur Linux, Windows et macOS
+La CI GitHub Actions (`.github/workflows/ci.yml`) lance Biome et Ruff, puis les tests sur Linux, Windows et macOS
 avec Python 3.10 et 3.13.
 
 ## Commandes
@@ -26,6 +26,7 @@ python3 ai_secret_scout.py update         # mise à jour via npm (voir run_updat
 python3 -m py_compile ai_secret_scout.py  # vérification syntaxique minimale
 
 npm run lint      # biome lint . (ne couvre que le JS de bin/)
+npm run lint:py   # ruff check . (règles par défaut de Ruff 0.16.7, cible py310 via ruff.toml)
 npm run check     # biome check --write .
 npm run ci        # biome ci . (indentation par tabulations, imports `node:`)
 npm test          # node --test "test/*.test.js" : CLI via bin/aiscout.js, moteur via python -c, sur un faux $HOME
@@ -97,6 +98,10 @@ Au premier lancement, `load_custom_rules()` crée `~/.config/aiscout/rules.json`
   où npm interroge le registre à la demande ; `run_update()` n'installe que si le script tourne depuis `npm root -g`,
   sinon il affiche la commande. Les tests utilisent un faux npm via `AISCOUT_NPM`), compatibilité
   Linux / Windows natif / WSL (garder les branches `IS_WINDOWS`).
+- Ruff : `ruff.toml` ne sélectionne aucune règle, ce sont celles par défaut de la version. La CI fige
+  `ruff==0.16.7` : monter cette version dans la CI et en local en même temps, puis corriger ce qui apparaît.
+- Notifications Windows : le titre et le texte passent par `$env:AISCOUT_BALLOON_*`, jamais par le script
+  PowerShell (un `$(...)` dans un nom de projet y serait exécuté). Ne pas réintroduire d'interpolation.
 - Le paquet npm publie uniquement `bin/`, `ai_secret_scout.py`, `LICENSE` et les deux README (champ `files` + `.npmignore`).
 - Les tests n'écrivent jamais de jeton au format réel dans le dépôt : ils l'assemblent à l'exécution
   (`` `ghp${"_"}…` ``) pour ne pas déclencher la push protection de GitHub ni les scanners.

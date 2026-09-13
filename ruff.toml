@@ -1,0 +1,3 @@
+# Aucune sélection explicite : ce sont les règles par défaut de Ruff, qui changent d'une version
+# à l'autre. La CI fige donc la version (voir .github/workflows/ci.yml) ; à monter ensemble.
+target-version = "py310"

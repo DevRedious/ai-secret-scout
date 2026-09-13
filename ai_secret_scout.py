@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 ===============================================================================
 AI SECRET SCOUT (aiscout) — Full TUI Application
@@ -9,21 +8,22 @@ Compatible : Claude Code, Antigravity/Gemini CLI, Codex, Copilot CLI, Cursor, Ai
 ===============================================================================
 """
 
-import sys
-import os
-import re
-import time
+import argparse
+import contextlib
 import json
 import math
-import shutil
+import os
 import platform
-import argparse
+import re
+import shutil
 import subprocess
+import sys
+import time
 import unicodedata
-from pathlib import Path
-from datetime import datetime
 from collections import Counter
-from typing import List, Dict, Any, Optional, Tuple
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
 
 IS_WINDOWS = sys.platform == "win32"
 
@@ -31,17 +31,15 @@ if IS_WINDOWS:
     import msvcrt
     # Active les séquences d'échappement VT100 / ANSI sous console Windows
     os.system("")
-    try:
+    with contextlib.suppress(AttributeError, OSError, ValueError):
         sys.stdout.reconfigure(encoding="utf-8")
         sys.stdin.reconfigure(encoding="utf-8")
-    except Exception:
-        pass
 else:
     import select
     import termios
     import tty
 
-VERSION = "2.4.7"
+VERSION = "2.4.8"
 
 # --- INTERNATIONALISATION (I18N) ---
 def detect_default_lang() -> str:
@@ -51,7 +49,7 @@ def detect_default_lang() -> str:
 
 CURRENT_LANG = detect_default_lang()
 
-def set_lang(lang: Optional[str]):
+def set_lang(lang: str | None):
     global CURRENT_LANG
     if not lang:
         CURRENT_LANG = detect_default_lang()
@@ -71,7 +69,7 @@ SEV_TRANSLATIONS = {
     "fr": {"CRITICAL": "CRITIQUE", "HIGH": "ÉLEVÉ", "MEDIUM": "MOYEN", "CRITIQUE": "CRITIQUE", "ÉLEVÉ": "ÉLEVÉ", "MOYEN": "MOYEN"}
 }
 
-def fmt_severity(sev: str, lang: Optional[str] = None) -> str:
+def fmt_severity(sev: str, lang: str | None = None) -> str:
     l = lang or CURRENT_LANG
     norm_sev = SEV_TRANSLATIONS["fr"].get(sev, sev)
     if l == "en":
@@ -155,7 +153,7 @@ RULE_I18N = {
     }
 }
 
-def get_rule_display(name: str, default_desc: str = "", lang: Optional[str] = None) -> Tuple[str, str]:
+def get_rule_display(name: str, default_desc: str = "", lang: str | None = None) -> tuple[str, str]:
     l = lang or CURRENT_LANG
     if l == "en" and name in RULE_I18N["en"]:
         return RULE_I18N["en"][name]["name"], RULE_I18N["en"][name]["desc"]
@@ -177,7 +175,7 @@ USAGE_CONTEXT_I18N = {
     }
 }
 
-def fmt_usage_context(ctx: str, lang: Optional[str] = None) -> str:
+def fmt_usage_context(ctx: str, lang: str | None = None) -> str:
     l = lang or CURRENT_LANG
     if l == "en":
         return USAGE_CONTEXT_I18N["en"].get(ctx, ctx)
@@ -519,7 +517,7 @@ def t(key: str, **kwargs) -> Any:
     if isinstance(val, str) and kwargs:
         try:
             return val.format(**kwargs)
-        except Exception:
+        except (KeyError, IndexError, ValueError):
             return val
     return val
 
@@ -663,10 +661,10 @@ else:
     CONFIG_DIR = Path.home() / ".config" / "aiscout"
 CUSTOM_RULES_FILE = CONFIG_DIR / "rules.json"
 
-def load_custom_rules() -> Dict[str, Dict[str, str]]:
+def load_custom_rules() -> dict[str, dict[str, str]]:
     """Charge les règles personnalisées de l'utilisateur depuis rules.json."""
     if not CUSTOM_RULES_FILE.exists():
-        try:
+        with contextlib.suppress(OSError):
             CONFIG_DIR.mkdir(parents=True, exist_ok=True)
             sample = {
                 "_comment": "Ajoutez vos règles personnalisées ici. Format: Nom: {regex, severity, description}",
@@ -678,8 +676,6 @@ def load_custom_rules() -> Dict[str, Dict[str, str]]:
             }
             with open(CUSTOM_RULES_FILE, "w", encoding="utf-8") as f:
                 json.dump(sample, f, indent=2, ensure_ascii=False)
-        except Exception:
-            pass
         return {}
 
     try:
@@ -700,8 +696,31 @@ def load_custom_rules() -> Dict[str, Dict[str, str]]:
                     "description": v.get("description", "Règle personnalisée utilisateur.")
                 }
         return rules
-    except Exception:
+    except (OSError, ValueError, AttributeError):
+        # Fichier illisible, JSON invalide ou racine qui n'est pas un objet.
         return {}
+
+
+# Script fixe : le titre et le texte (noms de projet, chemins de session) arrivent par l'environnement.
+# Insérés dans la chaîne entre guillemets doubles, un « $(...) » y serait exécuté par PowerShell.
+WINDOWS_NOTIFICATION_SCRIPT = (
+    '[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms"); '
+    '$objNotifyIcon = New-Object System.Windows.Forms.NotifyIcon; '
+    '$objNotifyIcon.Icon = [System.Drawing.SystemIcons]::Shield; '
+    '$objNotifyIcon.BalloonTipIcon = "Warning"; '
+    '$objNotifyIcon.BalloonTipTitle = $env:AISCOUT_BALLOON_TITLE; '
+    '$objNotifyIcon.BalloonTipText = $env:AISCOUT_BALLOON_TEXT; '
+    '$objNotifyIcon.Visible = $True; '
+    '$objNotifyIcon.ShowBalloonTip(5000); '
+    'Start-Sleep -Seconds 1; '
+    '$objNotifyIcon.Dispose()'
+)
+
+
+def build_windows_notification(title: str, message: str) -> tuple[list[str], dict[str, str]]:
+    """Commande PowerShell et environnement d'une notification Windows."""
+    env = {**os.environ, "AISCOUT_BALLOON_TITLE": title, "AISCOUT_BALLOON_TEXT": message.replace("\n", " ")}
+    return ["powershell", "-NoProfile", "-NonInteractive", "-Command", WINDOWS_NOTIFICATION_SCRIPT], env
 
 
 def send_desktop_notification(title: str, message: str, severity: str = "normal"):
@@ -709,34 +728,20 @@ def send_desktop_notification(title: str, message: str, severity: str = "normal"
     if os.getenv("AISCOUT_NO_NOTIFY"):
         return
     if IS_WINDOWS:
-        clean_title = title.replace('"', '`"').replace("'", "''")
-        clean_msg = message.replace('"', '`"').replace("'", "''").replace("\n", " ")
-        ps_script = (
-            f'[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms"); '
-            f'$objNotifyIcon = New-Object System.Windows.Forms.NotifyIcon; '
-            f'$objNotifyIcon.Icon = [System.Drawing.SystemIcons]::Shield; '
-            f'$objNotifyIcon.BalloonTipIcon = "Warning"; '
-            f'$objNotifyIcon.BalloonTipTitle = "{clean_title}"; '
-            f'$objNotifyIcon.BalloonTipText = "{clean_msg}"; '
-            f'$objNotifyIcon.Visible = $True; '
-            f'$objNotifyIcon.ShowBalloonTip(5000); '
-            f'Start-Sleep -Seconds 1; '
-            f'$objNotifyIcon.Dispose()'
-        )
-        try:
+        args, env = build_windows_notification(title, message)
+        with contextlib.suppress(OSError):
             subprocess.Popen(
-                ["powershell", "-NoProfile", "-NonInteractive", "-Command", ps_script],
+                args,
+                env=env,
                 creationflags=subprocess.CREATE_NO_WINDOW if hasattr(subprocess, "CREATE_NO_WINDOW") else 0,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL
             )
-        except Exception:
-            pass
         return
 
     if shutil.which("notify-send"):
         urgency = "critical" if severity in ("CRITIQUE", "ÉLEVÉ") else "normal"
-        try:
+        with contextlib.suppress(OSError, subprocess.SubprocessError):
             subprocess.run([
                 "notify-send",
                 "-u", urgency,
@@ -744,9 +749,7 @@ def send_desktop_notification(title: str, message: str, severity: str = "normal"
                 "-i", "security-high",
                 title,
                 message
-            ], capture_output=True, timeout=2)
-        except Exception:
-            pass
+            ], capture_output=True, timeout=2, check=False)
 
 
 PLACEHOLDER_KEYWORDS = [
@@ -778,6 +781,13 @@ COMMON_WORDS_FR_EN = {
     "postgres", "mysql", "database", "root", "admin", "required", "compromised",
     "invalid", "default", "optional", "mandatory", "provided", "accepted"
 }
+
+
+def local_time(timestamp: float | None = None) -> datetime:
+    """Heure locale avec fuseau : maintenant, ou à partir d'un horodatage (mtime)."""
+    if timestamp is None:
+        return datetime.now(timezone.utc).astimezone()
+    return datetime.fromtimestamp(timestamp, tz=timezone.utc).astimezone()
 
 
 def calculate_entropy(text: str) -> float:
@@ -896,10 +906,7 @@ def read_key() -> str:
         if data == b"\x03":
             return "CTRL_C"
 
-        try:
-            return data.decode("utf-8", errors="ignore")
-        except Exception:
-            return ""
+        return data.decode("utf-8", errors="ignore")
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
@@ -908,8 +915,8 @@ def read_key() -> str:
 class Finding:
     def __init__(self, category: str, secret_raw: str, file_path: str, line_no: int,
                  tool: str, project: str, usage_context: str, snippet: str,
-                 timestamp: Optional[str] = None, severity: Optional[str] = None,
-                 description: Optional[str] = None):
+                 timestamp: str | None = None, severity: str | None = None,
+                 description: str | None = None):
         self.category = category
         self.secret_raw = secret_raw
         self.secret_masked = self.mask(secret_raw)
@@ -923,14 +930,14 @@ class Finding:
         self.severity = severity or PATTERNS.get(category, {}).get("severity", "MOYEN")
         self.description = description or PATTERNS.get(category, {}).get("description", "")
 
-    def display_category(self, lang: Optional[str] = None) -> str:
+    def display_category(self, lang: str | None = None) -> str:
         name, _ = get_rule_display(self.category, default_desc=self.description, lang=lang)
         return name
 
-    def display_severity(self, lang: Optional[str] = None) -> str:
+    def display_severity(self, lang: str | None = None) -> str:
         return fmt_severity(self.severity, lang=lang)
 
-    def display_usage_context(self, lang: Optional[str] = None) -> str:
+    def display_usage_context(self, lang: str | None = None) -> str:
         return fmt_usage_context(self.usage_context, lang=lang)
 
     @staticmethod
@@ -940,7 +947,7 @@ class Finding:
             return s[:2] + "****"
         return s[:4] + "*" * (min(len(s) - 8, 20)) + s[-4:]
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "category": self.display_category(),
             "category_raw": self.category,
@@ -960,15 +967,15 @@ class Finding:
 
 
 class ScoutEngine:
-    def __init__(self, user_home: Optional[Path] = None):
+    def __init__(self, user_home: Path | None = None):
         self.home = user_home or Path.home()
         self.rg_path = self._locate_ripgrep()
         self.patterns = dict(PATTERNS)
         self.patterns.update(load_custom_rules())
-        self.findings: List[Finding] = []
-        self._cwd_cache: Dict[str, str] = {}
+        self.findings: list[Finding] = []
+        self._cwd_cache: dict[str, str] = {}
 
-    def _locate_ripgrep(self) -> Optional[str]:
+    def _locate_ripgrep(self) -> str | None:
         if os.getenv("AISCOUT_DISABLE_RIPGREP"):
             return None
         system_rg = shutil.which("rg")
@@ -979,7 +986,7 @@ class ScoutEngine:
             return str(cargo_rg)
         return None
 
-    def get_candidate_targets(self) -> List[Path]:
+    def get_candidate_targets(self) -> list[Path]:
         """Tous les emplacements connus, qu'ils existent ou non."""
         targets = [
             self.home / ".claude" / "projects",
@@ -1013,7 +1020,7 @@ class ScoutEngine:
             ])
         return targets
 
-    def get_target_directories(self) -> List[Path]:
+    def get_target_directories(self) -> list[Path]:
         return [p for p in self.get_candidate_targets() if p.exists()]
 
     def identify_tool(self, file_path: str) -> str:
@@ -1040,20 +1047,18 @@ class ScoutEngine:
 
         p = Path(file_path)
         if ".claude" in str(file_path) and p.suffix == ".jsonl":
-            try:
-                with open(p, "r", encoding="utf-8", errors="ignore") as f:
-                    for _ in range(10):
-                        line = f.readline()
-                        if not line:
-                            break
-                        if '"cwd"' in line:
-                            data = json.loads(line)
-                            if "cwd" in data and data["cwd"]:
-                                res = data["cwd"].replace(str(self.home), "~")
-                                self._cwd_cache[file_path] = res
-                                return res
-            except Exception:
-                pass
+            # Fichier illisible, JSON invalide, "cwd" qui n'est pas une chaîne : repli sur le nom du dossier.
+            with contextlib.suppress(OSError, ValueError, AttributeError, RecursionError), open(p, encoding="utf-8", errors="ignore") as f:
+                for _ in range(10):
+                    line = f.readline()
+                    if not line:
+                        break
+                    if '"cwd"' in line:
+                        data = json.loads(line)
+                        if data.get("cwd"):
+                            res = data["cwd"].replace(str(self.home), "~")
+                            self._cwd_cache[file_path] = res
+                            return res
 
             parent_name = p.parent.name
             if parent_name.startswith("-"):
@@ -1080,12 +1085,12 @@ class ScoutEngine:
 
         return str(p.parent).replace(str(self.home), "~")
 
-    def determine_usage_context(self, raw_line: str, tool: str) -> Tuple[str, str]:
+    def determine_usage_context(self, raw_line: str, tool: str) -> tuple[str, str]:
         line_clean = raw_line.strip()
         usage = "Texte consigné en session"
         try:
             data = json.loads(line_clean)
-        except Exception:
+        except (ValueError, RecursionError):
             data = None
         if isinstance(data, dict):
             # Antigravity porte aussi un champ "type" : tester "step_index" en premier.
@@ -1125,9 +1130,9 @@ class ScoutEngine:
         if len(val) < 6:
             return False
 
-        if val.startswith("$") or val.startswith("<") or val.startswith("{{") or val.startswith("[") or val.startswith("("):
+        if val.startswith(("$", "<", "{{", "[", "(")):
             return False
-        if val.endswith(">") or val.endswith("]") or val.endswith(")") or val.endswith("}"):
+        if val.endswith((">", "]", ")", "}")):
             return False
 
         is_free_text = any(kw in category for kw in FREE_TEXT_RULE_MARKERS)
@@ -1148,9 +1153,8 @@ class ScoutEngine:
         if any(marker in full_line for marker in ["AI SECRET SCOUT", "[REDACTED_BY_AISCOUT]", "FICHE DÉTAILLÉE DU SECRET", "rapport_audit"]):
             return False
 
-        if "Clé Privée" in category:
-            if "END " not in full_line and "PRIVATE KEY" not in full_line.split(text)[-1]:
-                return False
+        if "Clé Privée" in category and "END " not in full_line and "PRIVATE KEY" not in full_line.split(text)[-1]:
+            return False
 
         if any(kw in category for kw in ["Prompt", "CLI", "commande", "sensible"]):
             if lower_t in COMMON_WORDS_FR_EN:
@@ -1207,15 +1211,15 @@ class ScoutEngine:
             i += 1
         return "".join(out)
 
-    def _file_meta(self, fpath: str) -> Tuple[str, str, str]:
+    def _file_meta(self, fpath: str) -> tuple[str, str, str]:
         try:
-            mtime = datetime.fromtimestamp(os.path.getmtime(fpath)).strftime("%Y-%m-%d %H:%M")
+            mtime = local_time(os.path.getmtime(fpath)).strftime("%Y-%m-%d %H:%M")
         except OSError:
             mtime = "Inconnu"
         return self.identify_tool(fpath), self.resolve_project(fpath), mtime
 
-    def _match_line(self, cat_name: str, conf: Dict[str, str], line: str, fpath: str, lno: int,
-                    tool: str, project: str, mtime: str) -> List[Finding]:
+    def _match_line(self, cat_name: str, conf: dict[str, str], line: str, fpath: str, lno: int,
+                    tool: str, project: str, mtime: str) -> list[Finding]:
         """Point unique de correspondance : ripgrep, repli Python et watchdog passent tous ici."""
         if "ai_secret_scout" in fpath or "scan_secrets" in fpath:
             return []
@@ -1240,8 +1244,8 @@ class ScoutEngine:
             ))
         return found
 
-    def _scan_file(self, fpath: str, patterns: Dict[str, Dict[str, str]],
-                   tool: str, project: str, mtime: str) -> List[Finding]:
+    def _scan_file(self, fpath: str, patterns: dict[str, dict[str, str]],
+                   tool: str, project: str, mtime: str) -> list[Finding]:
         found = []
         try:
             with open(fpath, "r", encoding="utf-8", errors="ignore") as f:
@@ -1253,7 +1257,7 @@ class ScoutEngine:
         return found
 
     @staticmethod
-    def _list_scan_files(targets: List[str]) -> List[str]:
+    def _list_scan_files(targets: list[str]) -> list[str]:
         files = []
         for target in targets:
             tp = Path(target)
@@ -1266,12 +1270,12 @@ class ScoutEngine:
                             files.append(os.path.join(root, name))
         return files
 
-    def _rg_search(self, regex: str, targets: List[str]) -> Optional[List[Tuple[str, int, str]]]:
+    def _rg_search(self, regex: str, targets: list[str]) -> list[tuple[str, int, str]] | None:
         """Lignes trouvées par ripgrep, ou None si ripgrep refuse la regex."""
         cmd = [self.rg_path, "--null", "-H", "-n", "--no-heading", "--no-messages",
                "--glob", "!*.bak", "--glob", "!*.backup",
                "-e", self.rg_compatible_regex(regex)] + targets
-        proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+        proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
         if proc.returncode == 2 and not proc.stdout and "regex" in proc.stderr.lower():
             return None
         results = []
@@ -1290,15 +1294,15 @@ class ScoutEngine:
             results.append((fpath, lno, content.rstrip("\r")))
         return results
 
-    def scan(self, progress_callback=None) -> List[Finding]:
+    def scan(self, progress_callback=None) -> list[Finding]:
         self.findings = []
         targets = [str(p) for p in self.get_target_directories()]
         if not targets:
             return []
 
-        meta_cache: Dict[str, Tuple[str, str, str]] = {}
+        meta_cache: dict[str, tuple[str, str, str]] = {}
 
-        def meta(fpath: str) -> Tuple[str, str, str]:
+        def meta(fpath: str) -> tuple[str, str, str]:
             if fpath not in meta_cache:
                 meta_cache[fpath] = self._file_meta(fpath)
             return meta_cache[fpath]
@@ -1324,15 +1328,15 @@ class ScoutEngine:
                     progress_callback(idx, len(all_files), f"Lecture : {Path(fpath).name}")
                 self.findings.extend(self._scan_file(fpath, python_patterns, *meta(fpath)))
 
-        dedup_map: Dict[Tuple[str, str, str, int], Finding] = {}
+        dedup_map: dict[tuple[str, str, str, int], Finding] = {}
         for f in self.findings:
             key = (f.category, f.secret_raw, f.file_path, f.line_no)
             if key not in dedup_map:
                 dedup_map[key] = f
-        self.findings = sorted(list(dedup_map.values()), key=lambda x: (x.severity != "CRITIQUE", x.severity != "ÉLEVÉ", x.category))
+        self.findings = sorted(dedup_map.values(), key=lambda x: (x.severity != "CRITIQUE", x.severity != "ÉLEVÉ", x.category))
         return self.findings
 
-    def scan_single_file(self, fpath: Path) -> List[Finding]:
+    def scan_single_file(self, fpath: Path) -> list[Finding]:
         """Analyse unitairement un fichier pour y détecter des secrets."""
         if not fpath.is_file() or str(fpath).endswith((".bak", ".backup")):
             return []
@@ -1357,7 +1361,7 @@ class ScoutEngine:
         except OSError:
             return False
 
-    def list_backups(self) -> List[Path]:
+    def list_backups(self) -> list[Path]:
         """Recherche et liste tous les fichiers de sauvegarde .bak dans les répertoires d'IA."""
         backups = []
         for target in self.get_candidate_targets():
@@ -1383,7 +1387,7 @@ class ScoutEngine:
             shutil.copy2(backup_path, orig_path)
             backup_path.unlink()
             return True
-        except Exception:
+        except OSError:
             return False
 
     def restore_all_backups(self) -> int:
@@ -1398,11 +1402,9 @@ class ScoutEngine:
         """Supprime définitivement tous les fichiers de sauvegarde .bak."""
         count = 0
         for b in self.list_backups():
-            try:
+            with contextlib.suppress(OSError):
                 b.unlink()
                 count += 1
-            except Exception:
-                pass
         return count
 
 
@@ -1410,9 +1412,9 @@ class ScoutEngine:
 class ScoutTUI:
     def __init__(self, engine: ScoutEngine):
         self.engine = engine
-        self.findings: List[Finding] = []
-        self.active_filter_tool: Optional[str] = None
-        self.active_filter_project: Optional[str] = None
+        self.findings: list[Finding] = []
+        self.active_filter_tool: str | None = None
+        self.active_filter_project: str | None = None
         self.search_query: str = ""
         self.sort_mode: str = "severity"  # "severity", "date", "tool"
         self.reveal_mode: bool = False
@@ -1443,7 +1445,7 @@ class ScoutTUI:
     def build_top_bar(self, width: int) -> str:
         user = os.getenv("USER") or os.getenv("USERNAME") or "user"
         host = platform.node() or "localhost"
-        date_str = datetime.now().strftime("%d/%m/%Y %H:%M")
+        date_str = local_time().strftime("%d/%m/%Y %H:%M")
         u_lbl = t("user_label")
         h_lbl = t("host_label")
         left = f" ◈ AISCOUT v{VERSION} │ {u_lbl} : {user} │ {h_lbl} : {host}"
@@ -1456,7 +1458,7 @@ class ScoutTUI:
         space = max(0, width - display_len(content))
         return f"{C.BG_DARK}{C.WHITE}{content}{' ' * space}{C.RESET}"
 
-    def prompt_input(self, prompt_label: str, initial: str = "") -> Optional[str]:
+    def prompt_input(self, prompt_label: str, initial: str = "") -> str | None:
         """Saisie interactive inline sur la barre inférieure du TUI."""
         width = self.get_width()
         height = self.get_height()
@@ -1521,7 +1523,7 @@ class ScoutTUI:
         msg = "Language switched to English (EN)" if new_lang == "en" else "Langue basculée en Français (FR)"
         self.show_flash_message(f"✔ {msg}", C.CYAN)
 
-    def get_filtered_findings(self) -> List[Finding]:
+    def get_filtered_findings(self) -> list[Finding]:
         res = list(self.findings)
         if self.active_filter_tool:
             res = [f for f in res if f.tool == self.active_filter_tool]
@@ -1950,7 +1952,7 @@ class ScoutTUI:
             lines.append(" " * pad_left + f"{C.CYAN}│{C.BOLD}{C.WHITE}{card_hdr}{' ' * sp_hdr}{C.CYAN}│{C.RESET}")
             lines.append(" " * pad_left + f"{C.CYAN}├" + "─" * (card_w - 2) + "┤" + C.RESET)
 
-            def add_card_line(label, val, color=""):
+            def add_card_line(label, val, color="", lines=lines, pad_left=pad_left, card_w=card_w):
                 txt = f"  {C.BOLD}{label:<16}:{C.RESET} {color}{val}{C.RESET}"
                 vis = display_len(txt)
                 sp = max(0, card_w - 2 - vis)
@@ -2017,28 +2019,27 @@ class ScoutTUI:
         sys.stdout.flush()
 
         key = read_key()
-        if key in ("o", "O", "y", "Y"):
-            if self.engine.redact_secret(item):
-                item.secret_raw = "[REDACTED_BY_AISCOUT]"
-                item.secret_masked = "[REDACTED]"
-                lines = []
-                lines.append(self.build_top_bar(width))
+        if key in ("o", "O", "y", "Y") and self.engine.redact_secret(item):
+            item.secret_raw = "[REDACTED_BY_AISCOUT]"
+            item.secret_masked = "[REDACTED]"
+            lines = []
+            lines.append(self.build_top_bar(width))
+            lines.append("")
+            lines.append(self.center_line(f"{C.GREEN}{C.BOLD}{t('redact_success')}{C.RESET}", width))
+            lines.append(self.center_line(f"{C.WHITE}{t('redact_file_cleaned', file=Path(item.file_path).name)}{C.RESET}", width))
+            lines.append(self.center_line(f"{C.CYAN}{t('redact_bak_created', bak=Path(item.file_path).name + '.bak')}{C.RESET}", width))
+            while len(lines) < height - 1:
                 lines.append("")
-                lines.append(self.center_line(f"{C.GREEN}{C.BOLD}{t('redact_success')}{C.RESET}", width))
-                lines.append(self.center_line(f"{C.WHITE}{t('redact_file_cleaned', file=Path(item.file_path).name)}{C.RESET}", width))
-                lines.append(self.center_line(f"{C.CYAN}{t('redact_bak_created', bak=Path(item.file_path).name + '.bak')}{C.RESET}", width))
-                while len(lines) < height - 1:
-                    lines.append("")
-                lines = lines[:height - 1]
-                lines.append(self.build_bottom_bar(width, t("continue_hint")))
-                sys.stdout.write("\033[H" + "\n".join(lines))
-                sys.stdout.flush()
-                while read_key() not in ("ENTER", "ESC", "SPACE"):
-                    pass
+            lines = lines[:height - 1]
+            lines.append(self.build_bottom_bar(width, t("continue_hint")))
+            sys.stdout.write("\033[H" + "\n".join(lines))
+            sys.stdout.flush()
+            while read_key() not in ("ENTER", "ESC", "SPACE"):
+                pass
 
     # --- DIALOGUE DE FILTRAGE ---
     def run_filter_dialog(self):
-        tools = sorted(list(set(f.tool for f in self.findings)))
+        tools = sorted({f.tool for f in self.findings})
         width = self.get_width()
         height = self.get_height()
 
@@ -2077,7 +2078,7 @@ class ScoutTUI:
         height = self.get_height()
         items = self.get_filtered_findings()
 
-        tag = datetime.now().strftime("%Y%m%d_%H%M%S")
+        tag = local_time().strftime("%Y%m%d_%H%M%S")
         md_dest = self.engine.home / f"audit_secrets_ia_{tag}.md"
         json_dest = self.engine.home / f"audit_secrets_ia_{tag}.json"
 
@@ -2135,13 +2136,13 @@ class ScoutTUI:
             while read_key() not in ("ENTER", "SPACE", "ESC"):
                 pass
 
-    def export_markdown(self, path: Path, items: List[Finding]):
+    def export_markdown(self, path: Path, items: list[Finding]):
         is_fr = (get_lang() == "fr")
         user_name = os.getenv("USER") or os.getenv("USERNAME") or "user"
         with open(path, "w", encoding="utf-8") as f:
             if is_fr:
-                f.write(f"# Rapport d'Audit de Sécurité — Transcriptions d'IA\n\n")
-                f.write(f"- **Généré le** : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                f.write("# Rapport d'Audit de Sécurité — Transcriptions d'IA\n\n")
+                f.write(f"- **Généré le** : {local_time().strftime('%Y-%m-%d %H:%M:%S')}\n")
                 f.write(f"- **Utilisateur** : `{user_name}`\n")
                 f.write(f"- **Total secrets identifiés** : {len(items)}\n\n")
                 f.write("## Synthèse par Niveau de Sévérité\n\n")
@@ -2151,11 +2152,10 @@ class ScoutTUI:
                 f.write("## Détail des Secrets Détectés\n\n")
                 f.write("| # | Sévérité | Catégorie | Outil IA | Projet d'Origine | Valeur (Masquée) | Fichier |\n")
                 f.write("|---|---|---|---|---|---|---|\n")
-                for idx, item in enumerate(items, 1):
-                    f.write(f"| {idx} | {item.display_severity()} | {item.display_category()} | {item.tool} | {item.project} | `{item.secret_masked}` | `{Path(item.file_path).name}:{item.line_no}` |\n")
+                f.writelines(f"| {idx} | {item.display_severity()} | {item.display_category()} | {item.tool} | {item.project} | `{item.secret_masked}` | `{Path(item.file_path).name}:{item.line_no}` |\n" for idx, item in enumerate(items, 1))
             else:
-                f.write(f"# Security Audit Report — AI Assistant Histories\n\n")
-                f.write(f"- **Generated on** : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                f.write("# Security Audit Report — AI Assistant Histories\n\n")
+                f.write(f"- **Generated on** : {local_time().strftime('%Y-%m-%d %H:%M:%S')}\n")
                 f.write(f"- **User** : `{user_name}`\n")
                 f.write(f"- **Total exposed secrets** : {len(items)}\n\n")
                 f.write("## Summary by Severity Level\n\n")
@@ -2165,10 +2165,9 @@ class ScoutTUI:
                 f.write("## Detected Secrets Breakdown\n\n")
                 f.write("| # | Severity | Category | AI Tool | Origin Project | Value (Masked) | File |\n")
                 f.write("|---|---|---|---|---|---|---|\n")
-                for idx, item in enumerate(items, 1):
-                    f.write(f"| {idx} | {item.display_severity()} | {item.display_category()} | {item.tool} | {item.project} | `{item.secret_masked}` | `{Path(item.file_path).name}:{item.line_no}` |\n")
+                f.writelines(f"| {idx} | {item.display_severity()} | {item.display_category()} | {item.tool} | {item.project} | `{item.secret_masked}` | `{Path(item.file_path).name}:{item.line_no}` |\n" for idx, item in enumerate(items, 1))
 
-    def export_json(self, path: Path, items: List[Finding]):
+    def export_json(self, path: Path, items: list[Finding]):
         with open(path, "w", encoding="utf-8") as f:
             json.dump([item.to_dict() for item in items], f, indent=2, ensure_ascii=False)
 
@@ -2308,8 +2307,8 @@ class ScoutTUI:
                 try:
                     stat = b_path.stat()
                     size_kb = f"{stat.st_size / 1024:.1f} KB"
-                    date_str = datetime.fromtimestamp(stat.st_mtime).strftime("%d/%m/%Y %H:%M:%S")
-                except Exception:
+                    date_str = local_time(stat.st_mtime).strftime("%d/%m/%Y %H:%M:%S")
+                except OSError:
                     size_kb = "Unknown"
                     date_str = "Unknown"
 
@@ -2359,7 +2358,7 @@ class ScoutTUI:
 
     # --- SURVEILLANCE EN TEMPS RÉEL (WATCHDOG DÉDIÉ) ---
     @staticmethod
-    def _list_watched_files(targets: List[Path]) -> List[Path]:
+    def _list_watched_files(targets: list[Path]) -> list[Path]:
         files = []
         for target in targets:
             if target.is_file():
@@ -2373,7 +2372,7 @@ class ScoutTUI:
 
     def run_watchdog_screen(self):
         targets = self.engine.get_target_directories()
-        known_mtimes: Dict[str, float] = {}
+        known_mtimes: dict[str, float] = {}
 
         # Scan initial des mtimes des fichiers surveillés
         for fp in self._list_watched_files(targets):
@@ -2386,8 +2385,8 @@ class ScoutTUI:
         # et chaque modification rescanne le fichier entier.
         alerted = {(f.category, f.secret_raw, f.file_path) for f in self.findings}
 
-        events_log: List[str] = [
-            f"{C.GRAY}[{datetime.now().strftime('%H:%M:%S')}] {t('watchdog_started', files=len(known_mtimes))}{C.RESET}"
+        events_log: list[str] = [
+            f"{C.GRAY}[{local_time().strftime('%H:%M:%S')}] {t('watchdog_started', files=len(known_mtimes))}{C.RESET}"
         ]
         alerts_count = 0
         scans_count = 0
@@ -2479,7 +2478,7 @@ class ScoutTUI:
                     break
 
                 # Analyse des répertoires pour détecter fichiers nouveaux ou modifiés
-                now_ts = datetime.now().strftime("%H:%M:%S")
+                now_ts = local_time().strftime("%H:%M:%S")
                 for cp in self._list_watched_files(targets):
                     sp = str(cp)
                     try:
@@ -2531,7 +2530,7 @@ class ScoutTUI:
 NPM_PACKAGE = "ai-secret-scout"
 
 
-def parse_version(text: str) -> Tuple[int, ...]:
+def parse_version(text: str) -> tuple[int, ...]:
     return tuple(int(n) for n in re.findall(r"\d+", text.split("-")[0])[:3])
 
 
@@ -2543,7 +2542,7 @@ def run_update() -> int:
         return 1
 
     def npm_out(*args: str) -> str:
-        proc = subprocess.run([npm, *args], capture_output=True, text=True, timeout=60)
+        proc = subprocess.run([npm, *args], capture_output=True, text=True, timeout=60, check=False)
         if proc.returncode != 0:
             detail = (proc.stderr or proc.stdout).strip().splitlines()
             raise RuntimeError(detail[-1] if detail else f"code {proc.returncode}")
@@ -2577,7 +2576,7 @@ def run_update() -> int:
         return 0
 
     print(f"{C.GRAY}{t('update_running', cmd=' '.join(install_cmd))}{C.RESET}")
-    code = subprocess.run([npm, *install_cmd[1:]]).returncode
+    code = subprocess.run([npm, *install_cmd[1:]], check=False).returncode
     if code != 0:
         print(f"{C.RED}{t('update_failed', code=code)}{C.RESET}", file=sys.stderr)
         return code
@@ -2624,7 +2623,7 @@ def main():
     if args.list_rules:
         print(f"\n{C.CYAN}{C.BOLD}◈  AI SECRET SCOUT — {t('cli_rules_title')} ({len(engine.patterns)})  ◈{C.RESET}\n")
         print(f" {'#':<3} │ {t('col_severity'):<10} │ {t('cli_rule_name'):<35} │ {t('cli_rule_desc'):<45}")
-        print(f"─" * 98)
+        print("─" * 98)
         for i, (name, conf) in enumerate(engine.patterns.items(), 1):
             rule_disp, rule_desc = get_rule_display(name, conf.get("description", ""))
             sev_str = fmt_severity(conf.get("severity", "MOYEN"))
@@ -2695,8 +2694,6 @@ if __name__ == "__main__":
     try:
         main()
     except BrokenPipeError:
-        try:
+        with contextlib.suppress(OSError):
             sys.stderr.close()
-        except Exception:
-            pass
         sys.exit(0)

@@ -22,6 +22,18 @@ jobs:
       - run: npm ci
       - run: npm run ci
 
+  ruff:
+    name: Ruff
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      # Version figée : sans sélection dans ruff.toml, les règles actives dépendent de la version.
+      - run: pip install ruff==0.16.7
+      - run: ruff check .
+
   test:
     name: Tests (${{ matrix.os }}, Python ${{ matrix.python }})
     runs-on: ${{ matrix.os }}
