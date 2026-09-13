@@ -989,6 +989,7 @@ class ScoutEngine:
             self.home / ".gemini" / "antigravity-cli" / "history.jsonl",
             self.home / ".gemini" / "antigravity-ide" / "conversations",
             self.home / ".codex" / "sessions",
+            self.home / ".codex" / "history.jsonl",
             self.home / ".copilot" / "session-state",
             self.home / ".cursor" / "projects",
             self.home / ".cursor" / "plans",

@@ -177,6 +177,27 @@ for (const mode of SCAN_MODES) {
 			),
 	);
 
+	test(`[${mode.name}] scanne l'historique des prompts Codex`, opts, () =>
+		withHome(
+			{
+				".codex/history.jsonl": [
+					{ session_id: "019a", ts: 1757800000, text: "init" },
+					{ session_id: "019a", ts: 1757800001, text: `clé : ${GITHUB_TOKEN}` },
+				],
+			},
+			(home) => {
+				const [finding] = scanJson(home, mode.env);
+				assert.strictEqual(finding.secret_raw, GITHUB_TOKEN);
+				assert.strictEqual(finding.tool, "Codex");
+				assert.strictEqual(
+					finding.file_path,
+					path.join(home, ".codex", "history.jsonl"),
+				);
+				assert.strictEqual(finding.line_no, 2);
+			},
+		),
+	);
+
 	test(`[${mode.name}] attribue le contexte « prompt Antigravity »`, opts, () =>
 		withHome(
 			{
