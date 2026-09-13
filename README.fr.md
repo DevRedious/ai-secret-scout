@@ -162,6 +162,12 @@ aiscout
 ### Options en ligne de commande usuelles
 
 ```bash
+# Version installée
+aiscout --version
+
+# Mise à jour vers la dernière version npm (seule commande qui accède au réseau)
+aiscout update
+
 # Surveillance temps réel (Watchdog) avec alertes bureau
 aiscout --watch
 
@@ -547,4 +553,4 @@ aiscout --home-dir /home/autre_utilisateur
 * **Systèmes Supportés** : **Linux** (natif Wayland / X11), **Windows 10/11** (natif PowerShell, CMD, Windows Terminal) et **WSL / WSL2**.
 * **Système de Notification** : Détection automatique de `notify-send` sous Linux et toasts natifs PowerShell sous Windows.
 * **Configuration** : `~/.config/aiscout/rules.json` (ou `%APPDATA%\aiscout\rules.json` sous Windows).
-* **Confidentialité absolue** : 100% local, aucun flux réseau sortant, zéro télémétrie.
+* **Confidentialité absolue** : 100% local, aucun flux réseau sortant, zéro télémétrie. Seule exception : `aiscout update`, lancé à la demande, où npm interroge son registre.

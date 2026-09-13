@@ -293,6 +293,18 @@ I18N_STRINGS = {
         "watchdog_act_modification": "Modification",
         "notif_title": "Secret Détecté",
         "notif_sec": "Secret",
+        "cli_help_version": "Affiche la version installée et quitte",
+        "cli_help_update": "« update » : met à jour AI Secret Scout via npm (seul accès réseau, sur demande)",
+        "update_checking": "Vérification de la dernière version sur le registre npm...",
+        "update_uptodate": "✔ AI Secret Scout est à jour (v{version}).",
+        "update_available": "Nouvelle version disponible : v{current} → v{latest}",
+        "update_running": "Mise à jour : {cmd}",
+        "update_done": "✔ AI Secret Scout mis à jour en v{latest}.",
+        "update_failed": "❌ La mise à jour a échoué (code {code}). Droits insuffisants ? Relancez avec les droits d'administration ou configurez un préfixe npm utilisateur.",
+        "update_npx": "Lancé via npx : « {cmd} » exécute directement la dernière version.",
+        "update_manual": "AI Secret Scout n'est pas installé globalement par npm : lancez « {cmd} » pour installer la dernière version.",
+        "update_no_npm": "❌ npm est introuvable : impossible de vérifier ou d'installer une mise à jour.",
+        "update_check_failed": "❌ Impossible d'interroger le registre npm : {error}",
         "confirm_title": "⚠️  CONFIRMATION",
         "confirm_bottom": "[O] Confirmer  │  [Annuler] Toute autre touche",
         "continue_hint": "[Entrée] / [Espace] pour continuer",
@@ -444,6 +456,18 @@ I18N_STRINGS = {
         "watchdog_act_modification": "Modification",
         "notif_title": "Secret Detected",
         "notif_sec": "Secret",
+        "cli_help_version": "Print the installed version and exit",
+        "cli_help_update": "\"update\": update AI Secret Scout through npm (only network access, on demand)",
+        "update_checking": "Checking the latest version on the npm registry...",
+        "update_uptodate": "✔ AI Secret Scout is up to date (v{version}).",
+        "update_available": "New version available: v{current} → v{latest}",
+        "update_running": "Updating: {cmd}",
+        "update_done": "✔ AI Secret Scout updated to v{latest}.",
+        "update_failed": "❌ Update failed (code {code}). Missing permissions? Retry with administrator rights or configure a user-level npm prefix.",
+        "update_npx": "Launched through npx: \"{cmd}\" runs the latest version directly.",
+        "update_manual": "AI Secret Scout is not installed globally with npm: run \"{cmd}\" to install the latest version.",
+        "update_no_npm": "❌ npm not found: cannot check for or install an update.",
+        "update_check_failed": "❌ Could not query the npm registry: {error}",
         "confirm_title": "⚠️  CONFIRMATION",
         "confirm_bottom": "[Y] Confirm  │  [Cancel] Any other key",
         "continue_hint": "[Enter] / [Space] to continue",
@@ -2502,6 +2526,64 @@ class ScoutTUI:
                 termios.tcsetattr(fd, termios.TCSADRAIN, old_term)
 
 
+# --- MISE À JOUR (npm) ---
+NPM_PACKAGE = "ai-secret-scout"
+
+
+def parse_version(text: str) -> Tuple[int, ...]:
+    return tuple(int(n) for n in re.findall(r"\d+", text.split("-")[0])[:3])
+
+
+def run_update() -> int:
+    """Seul accès réseau de l'outil, et uniquement sur demande : c'est npm qui interroge le registre."""
+    npm = os.getenv("AISCOUT_NPM") or shutil.which("npm")
+    if not npm or not os.path.isfile(npm):
+        print(f"{C.RED}{t('update_no_npm')}{C.RESET}", file=sys.stderr)
+        return 1
+
+    def npm_out(*args: str) -> str:
+        proc = subprocess.run([npm, *args], capture_output=True, text=True, timeout=60)
+        if proc.returncode != 0:
+            detail = (proc.stderr or proc.stdout).strip().splitlines()
+            raise RuntimeError(detail[-1] if detail else f"code {proc.returncode}")
+        return proc.stdout.strip()
+
+    print(f"{C.GRAY}{t('update_checking')}{C.RESET}")
+    try:
+        latest = npm_out("view", NPM_PACKAGE, "version")
+    except (OSError, RuntimeError, subprocess.TimeoutExpired) as exc:
+        print(f"{C.RED}{t('update_check_failed', error=exc)}{C.RESET}", file=sys.stderr)
+        return 1
+
+    if parse_version(latest) <= parse_version(VERSION):
+        print(f"{C.GREEN}{t('update_uptodate', version=VERSION)}{C.RESET}")
+        return 0
+
+    print(f"{C.YELLOW}{C.BOLD}{t('update_available', current=VERSION, latest=latest)}{C.RESET}")
+    install_cmd = ["npm", "install", "-g", f"{NPM_PACKAGE}@latest"]
+    script = Path(__file__).resolve()
+
+    if "_npx" in script.parts:
+        print(t("update_npx", cmd=f"npx {NPM_PACKAGE}@latest"))
+        return 0
+    try:
+        global_pkg = (Path(npm_out("root", "-g")) / NPM_PACKAGE).resolve()
+    except (OSError, RuntimeError, subprocess.TimeoutExpired):
+        global_pkg = None
+    if global_pkg is None or global_pkg not in script.parents:
+        # Clone, dépendance locale ou installation par un autre gestionnaire : on n'écrase rien.
+        print(t("update_manual", cmd=" ".join(install_cmd)))
+        return 0
+
+    print(f"{C.GRAY}{t('update_running', cmd=' '.join(install_cmd))}{C.RESET}")
+    code = subprocess.run([npm, *install_cmd[1:]]).returncode
+    if code != 0:
+        print(f"{C.RED}{t('update_failed', code=code)}{C.RESET}", file=sys.stderr)
+        return code
+    print(f"{C.GREEN}{C.BOLD}{t('update_done', latest=latest)}{C.RESET}")
+    return 0
+
+
 # --- POINT D'ENTRÉE ---
 def main():
     # Détection précoce du paramètre --lang / -l pour adapter le message d'aide argparse
@@ -2511,9 +2593,12 @@ def main():
             break
 
     parser = argparse.ArgumentParser(
+        prog="aiscout",
         description=t("cli_desc"),
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
+    parser.add_argument("command", nargs="?", choices=["update"], help=t("cli_help_update"))
+    parser.add_argument("--version", "-V", action="version", version=f"aiscout {VERSION}", help=t("cli_help_version"))
     parser.add_argument("--scan", action="store_true", help=t("cli_help_scan"))
     parser.add_argument("--watch", action="store_true", help=t("cli_help_watch"))
     parser.add_argument("--restore", action="store_true", help=t("cli_help_restore"))
@@ -2528,6 +2613,9 @@ def main():
     args = parser.parse_args()
     if args.lang:
         set_lang(args.lang)
+
+    if args.command == "update":
+        sys.exit(run_update())
 
     user_home = Path(args.home_dir) if args.home_dir else None
     engine = ScoutEngine(user_home=user_home)

@@ -159,6 +159,12 @@ aiscout
 
 ### 🛠️ Common CLI Commands
 ```bash
+# Print the installed version
+aiscout --version
+
+# Update to the latest npm release (the only command that uses the network)
+aiscout update
+
 # Launch real-time background watchdog with desktop notifications
 aiscout --watch
 
@@ -547,7 +553,7 @@ aiscout --home-dir /home/other_user
 * **Supported Platforms**: **Linux** (native Wayland / X11), **Windows 10/11** (native PowerShell, CMD, Windows Terminal), and **WSL / WSL2**.
 * **Notification System**: Auto-detects `notify-send` on Linux and native PowerShell toast notifications on Windows.
 * **Configuration Path**: `~/.config/aiscout/rules.json` (or `%APPDATA%\aiscout\rules.json` on Windows).
-* **Zero Telemetry**: 100% local execution, zero outbound network traffic, complete privacy guarantee.
+* **Zero Telemetry**: 100% local execution, zero outbound network traffic, complete privacy guarantee. The only exception is `aiscout update`, run on demand, where npm queries its registry.
 
 ---
 

@@ -21,6 +21,8 @@ python3 ai_secret_scout.py --scan         # scan puis tableau interactif
 python3 ai_secret_scout.py --json         # scan headless, JSON sur stdout
 python3 ai_secret_scout.py --list-rules   # règles intégrées + personnalisées
 python3 ai_secret_scout.py --home-dir DIR # scanne un autre $HOME (utile pour tester)
+python3 ai_secret_scout.py --version      # ou -V : « aiscout X.Y.Z »
+python3 ai_secret_scout.py update         # mise à jour via npm (voir run_update)
 python3 -m py_compile ai_secret_scout.py  # vérification syntaxique minimale
 
 npm run lint      # biome lint . (ne couvre que le JS de bin/)
@@ -91,7 +93,9 @@ Au premier lancement, `load_custom_rules()` crée `~/.config/aiscout/rules.json`
   captures des deux README (`AISCOUT vX.Y.Z`), à garder synchronisés. Une version déjà publiée sur npm ne peut pas être republiée.
 - La documentation est bilingue : `README.md` (EN) et `README.fr.md` (FR) se modifient ensemble.
   Les libellés visibles se modifient dans les deux langues de `I18N_STRINGS`.
-- Contrainte produit : **aucune dépendance** Python externe, aucun trafic réseau, compatibilité
+- Contrainte produit : **aucune dépendance** Python externe, aucun trafic réseau (seule exception : `aiscout update`,
+  où npm interroge le registre à la demande ; `run_update()` n'installe que si le script tourne depuis `npm root -g`,
+  sinon il affiche la commande. Les tests utilisent un faux npm via `AISCOUT_NPM`), compatibilité
   Linux / Windows natif / WSL (garder les branches `IS_WINDOWS`).
 - Le paquet npm publie uniquement `bin/`, `ai_secret_scout.py`, `LICENSE` et les deux README (champ `files` + `.npmignore`).
 - Les tests n'écrivent jamais de jeton au format réel dans le dépôt : ils l'assemblent à l'exécution
