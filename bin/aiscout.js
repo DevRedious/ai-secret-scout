@@ -5,7 +5,7 @@ const path = require("node:path");
 const { runCheck } = require("./check-environment");
 
 // Valide la présence et la version de Node (>=16) et Python (>=3.10)
-const pyCmd = runCheck(false);
+const pyCmd = runCheck();
 
 const pyScript = path.join(__dirname, "..", "ai_secret_scout.py");
 

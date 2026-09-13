@@ -10,7 +10,8 @@ Il est distribué comme paquet npm, mais **tout le moteur est un unique script P
 (`ai_secret_scout.py`, stdlib uniquement, Python ≥ 3.10). Le JavaScript de `bin/` ne sert qu'à lancer ce script.
 
 Dépôt public : https://github.com/DevRedious/ai-secret-scout — paquet npm `ai-secret-scout` (compte `devredious`).
-Il n'existe aucune suite de tests.
+La CI GitHub Actions (`.github/workflows/ci.yml`) lance Biome, puis les tests sur Linux, Windows et macOS
+avec Python 3.10 et 3.13.
 
 ## Commandes
 
@@ -25,6 +26,8 @@ python3 -m py_compile ai_secret_scout.py  # vérification syntaxique minimale
 npm run lint      # biome lint . (ne couvre que le JS de bin/)
 npm run check     # biome check --write .
 npm run ci        # biome ci . (indentation par tabulations, imports `node:`)
+npm test          # node --test : test/*.test.js, lancés via bin/aiscout.js sur un faux $HOME
+node --test --test-name-pattern="list-rules"   # un seul test
 npm publish --dry-run   # vérifier le contenu du tarball avant publication
 ```
 
@@ -39,7 +42,8 @@ Au premier lancement, `load_custom_rules()` crée `~/.config/aiscout/rules.json`
 
 - `bin/aiscout.js` : appelle `runCheck()` de `bin/check-environment.js` (Node ≥ 16, recherche d'un
   Python ≥ 3.10 parmi `python3`/`python`/`py`), puis lance `ai_secret_scout.py` avec les arguments
-  transmis tels quels. `check-environment.js --postinstall` sert de hook `postinstall` npm et ne fait qu'avertir.
+  transmis tels quels. Le paquet n'a volontairement **aucun script `postinstall`** : Socket.dev le signale
+  comme risque élevé, et la même vérification tourne déjà à chaque lancement.
 - `ai_secret_scout.py`, de haut en bas :
   1. **i18n** : `CURRENT_LANG`, `t(key)`, `I18N_STRINGS`, et les tables de traduction FR→EN
      `SEV_TRANSLATIONS`, `RULE_I18N`, `USAGE_CONTEXT_I18N`.
@@ -81,4 +85,10 @@ Au premier lancement, `load_custom_rules()` crée `~/.config/aiscout/rules.json`
   Les libellés visibles se modifient dans les deux langues de `I18N_STRINGS`.
 - Contrainte produit : **aucune dépendance** Python externe, aucun trafic réseau, compatibilité
   Linux / Windows natif / WSL (garder les branches `IS_WINDOWS`).
-- Le paquet npm publie uniquement `bin/`, `ai_secret_scout.py` et les deux README (champ `files` + `.npmignore`).
+- Le paquet npm publie uniquement `bin/`, `ai_secret_scout.py`, `LICENSE` et les deux README (champ `files` + `.npmignore`).
+- Les tests n'écrivent jamais de jeton au format réel dans le dépôt : ils l'assemblent à l'exécution
+  (`` `ghp${"_"}…` ``) pour ne pas déclencher la push protection de GitHub ni les scanners.
+- Publication : la 2FA npm est obligatoire. `npm publish` lancé sans vrai terminal sort en `EOTP` et masque le lien ;
+  il faut le lancer dans un pseudo-terminal (`python3 -c 'import pty; pty.spawn(["npm","publish","--auth-type=web","--browser=false"])'`)
+  puis faire valider le lien affiché dans le navigateur.
+- Les badges des README (CI, npm, Socket, licence) sont dynamiques et sans numéro de version : ne pas y figer de version.

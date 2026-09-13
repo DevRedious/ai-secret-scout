@@ -114,58 +114,11 @@ function getInstallSuggestion(isFr) {
 	return `👉 Recommended installation command for your distribution:\n     ${cmd}`;
 }
 
-function runCheck(isPostinstall = false) {
+function runCheck() {
 	const isFr = isFrenchLocale();
 	const nodeStatus = checkNodeVersion();
 	const pyStatus = checkPythonVersion();
 
-	if (isPostinstall) {
-		// Mode postinstall lors du npm install -g
-		if (nodeStatus.ok && pyStatus.ok) {
-			console.log(
-				"\x1b[32m✔ AI Secret Scout - Environment check passed:\x1b[0m",
-			);
-			console.log(`  • Node.js : ${nodeStatus.version} (OK)`);
-			console.log(`  • Python  : ${pyStatus.version} (${pyStatus.cmd} - OK)`);
-			console.log(
-				"\x1b[36m🚀 AI Secret Scout is ready to run! Type: aiscout\x1b[0m\n",
-			);
-			return true;
-		}
-
-		if (!nodeStatus.ok) {
-			console.warn(
-				`\x1b[33m⚠️  Warning: Node.js version ${nodeStatus.version} detected. AI Secret Scout recommends Node.js >= 16.0.0.\x1b[0m`,
-			);
-		}
-
-		if (!pyStatus.ok) {
-			console.warn(
-				"\x1b[33m──────────────────────────────────────────────────────────────────\x1b[0m",
-			);
-			if (pyStatus.tooOld) {
-				console.warn(
-					`\x1b[33m⚠️  Warning: Python ${pyStatus.version} found via '${pyStatus.cmd}', but AI Secret Scout requires Python >= 3.10.\x1b[0m`,
-				);
-			} else {
-				console.warn(
-					"\x1b[33m⚠️  Warning: Python 3 was not detected on your system.\x1b[0m",
-				);
-			}
-			console.warn(
-				isFr
-					? "AI Secret Scout nécessite Python 3.10+ pour exécuter le moteur d'analyse TUI."
-					: "AI Secret Scout requires Python 3.10+ to run the core TUI security engine.",
-			);
-			console.warn(getInstallSuggestion(isFr));
-			console.warn(
-				"\x1b[33m──────────────────────────────────────────────────────────────────\x1b[0m\n",
-			);
-		}
-		return true;
-	}
-
-	// Mode runtime direct (aiscout execution)
 	if (!nodeStatus.ok) {
 		console.error(
 			isFr
@@ -209,8 +162,7 @@ function runCheck(isPostinstall = false) {
 }
 
 if (require.main === module) {
-	const isPostinstall = process.argv.includes("--postinstall");
-	runCheck(isPostinstall);
+	runCheck();
 }
 
 module.exports = {

@@ -9,11 +9,18 @@
        ◈  A I   S E C R E T   S C O U T  ◈
   </pre>
 
-  <h2>AI Secret Scout (<code>aiscout</code>) — v2.4.3</h2>
+  <h2>AI Secret Scout (<code>aiscout</code>) — v2.4.4</h2>
 
   <p align="center">
     <!-- Row 1: tech & platform badges -->
+    <a href="https://github.com/DevRedious/ai-secret-scout/actions/workflows/ci.yml"><img src="https://github.com/DevRedious/ai-secret-scout/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+    <a href="https://www.npmjs.com/package/ai-secret-scout"><img src="https://img.shields.io/npm/v/ai-secret-scout?logo=npm&amp;color=CB3837" alt="npm version"></a>
+    <a href="https://www.npmjs.com/package/ai-secret-scout"><img src="https://img.shields.io/npm/dm/ai-secret-scout?logo=npm&amp;color=CB3837" alt="npm downloads"></a>
     <a href="https://socket.dev/npm/package/ai-secret-scout"><img src="https://badge.socket.dev/npm/package/ai-secret-scout" alt="Socket Badge"></a>
+    <a href="./LICENSE"><img src="https://img.shields.io/npm/l/ai-secret-scout?color=blue" alt="License MIT"></a>
+  </p>
+
+  <p align="center">
     <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&amp;logoColor=white" alt="Python 3.10+">
     <img src="https://img.shields.io/badge/Interface-Full--Screen%20TUI-06B6D4?logo=gnometerminal&amp;logoColor=white" alt="Full-Screen TUI">
     <img src="https://img.shields.io/badge/Dependencies-Zero%20External-22c55e?logo=python&amp;logoColor=white" alt="Zero Dependencies">
@@ -179,7 +186,7 @@ The application automatically switches your terminal to an alternate screen buff
 ### 1. Central Hub & Dashboard
 
 ```text
- ◈ AISCOUT v2.4.3 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
+ ◈ AISCOUT v2.4.4 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
 
                  █████╗ ██╗   ███████╗ ██████╗ ██████╗ ██╗   ██╗████████╗
                 ██╔══██╗██║   ██╔════╝██╔════╝██╔═══██╗██║   ██║╚══██╔══╝
@@ -215,7 +222,7 @@ The application automatically switches your terminal to an alternate screen buff
 The interactive table allows fluid inspection of all detected secrets with multi-criteria sorting and instantaneous full-text filtering:
 
 ```text
- ◈ AISCOUT v2.4.3 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
+ ◈ AISCOUT v2.4.4 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
 
    📋 SECRET EXPLORER (1/21) — Mode : MASKED 🛡️ │ Sort : Severity (🔴 > 🟡 > 🔵)
 
@@ -236,7 +243,7 @@ The interactive table allows fluid inspection of all detected secrets with multi
 Pressing `/` opens an inline prompt directly in the status bar. The table updates dynamically with every keystroke:
 
 ```text
- ◈ AISCOUT v2.4.3 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
+ ◈ AISCOUT v2.4.4 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
 
    📋 SECRET EXPLORER (1/3) — Mode : MASKED 🛡️ │ Sort : Severity (🔴 > 🟡 > 🔵)
          🔍 Active filter: "github" (3 matching secrets) │ [Backspace/Esc] Clear 
@@ -256,7 +263,7 @@ Pressing `/` opens an inline prompt directly in the status bar. The table update
 Pressing `Enter` on any row displays a full diagnostic modal card highlighting the source file, context, and remediation recommendations:
 
 ```text
- ◈ AISCOUT v2.4.3 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
+ ◈ AISCOUT v2.4.4 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
 
    ╭──────────────────────────────────────────────────────────────────────────────────╮
    │  AUDIT CARD FOR DETECTED SECRET                                                  │
@@ -285,7 +292,7 @@ Pressing `Enter` on any row displays a full diagnostic modal card highlighting t
 During scans, redactions, or reports generation, an animated 100ms spinner displays current scan phase and progress percentage:
 
 ```text
- ◈ AISCOUT v2.4.3 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
+ ◈ AISCOUT v2.4.4 │ User : dev_redious │ Host : workstation                12/09/2026 22:30
 
                  █████╗ ██╗   ███████╗ ██████╗ ██████╗ ██╗   ██╗████████╗
                 ██╔══██╗██║   ██╔════╝██╔════╝██╔═══██╗██║   ██║╚══██╔══╝
@@ -321,7 +328,7 @@ During scans, redactions, or reports generation, an animated 100ms spinner displ
 The **Watchdog** mode turns `aiscout` into a background sentinel:
 
 ```text
- ◈ AISCOUT v2.4.3 │ User : dev_redious │ Host : workstation                12/09/2026 22:21
+ ◈ AISCOUT v2.4.4 │ User : dev_redious │ Host : workstation                12/09/2026 22:21
 
             📡 REAL-TIME MONITORING (WATCHDOG)  │  🟢 [ACTIVE SENTINEL]
         Detects active AI sessions writing to disk and sends instant desktop alerts
@@ -352,7 +359,7 @@ The **Watchdog** mode turns `aiscout` into a background sentinel:
 TUI Menu `[7]` provides complete control over backup files created prior to sanitization:
 
 ```text
- ◈ AISCOUT v2.4.3 │ User : dev_redious │ Host : workstation                12/09/2026 22:22
+ ◈ AISCOUT v2.4.4 │ User : dev_redious │ Host : workstation                12/09/2026 22:22
 
               ↩️  SAFE RESTORE & BACKUP MANAGER (.BAK)
            Restore original files before redaction or purge stale backup copies.

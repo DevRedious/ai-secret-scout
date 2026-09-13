@@ -9,11 +9,18 @@
        ◈  A I   S E C R E T   S C O U T  ◈
   </pre>
 
-  <h2>AI Secret Scout (<code>aiscout</code>) — v2.4.3</h2>
+  <h2>AI Secret Scout (<code>aiscout</code>) — v2.4.4</h2>
 
   <p align="center">
     <!-- Ligne 1 : badges techno & plateforme -->
+    <a href="https://github.com/DevRedious/ai-secret-scout/actions/workflows/ci.yml"><img src="https://github.com/DevRedious/ai-secret-scout/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+    <a href="https://www.npmjs.com/package/ai-secret-scout"><img src="https://img.shields.io/npm/v/ai-secret-scout?logo=npm&amp;color=CB3837" alt="npm version"></a>
+    <a href="https://www.npmjs.com/package/ai-secret-scout"><img src="https://img.shields.io/npm/dm/ai-secret-scout?logo=npm&amp;color=CB3837" alt="npm downloads"></a>
     <a href="https://socket.dev/npm/package/ai-secret-scout"><img src="https://badge.socket.dev/npm/package/ai-secret-scout" alt="Socket Badge"></a>
+    <a href="./LICENSE"><img src="https://img.shields.io/npm/l/ai-secret-scout?color=blue" alt="License MIT"></a>
+  </p>
+
+  <p align="center">
     <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&amp;logoColor=white" alt="Python 3.10+">
     <img src="https://img.shields.io/badge/Interface-TUI%20Plein%20%C3%89cran-06B6D4?logo=gnometerminal&amp;logoColor=white" alt="TUI Plein Écran">
     <img src="https://img.shields.io/badge/D%C3%A9pendances-Zero%20External-22c55e?logo=python&amp;logoColor=white" alt="Zéro Dépendance">
@@ -179,7 +186,7 @@ Le moteur TUI autonome d'`aiscout` (pure bibliothèque standard Python) s'adapte
 ### 1. Tableau de bord & Menu d'accueil interactif (Hub central)
 
 ```text
- ◈ AISCOUT v2.4.3 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
+ ◈ AISCOUT v2.4.4 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
 
                  █████╗ ██╗   ███████╗ ██████╗ ██████╗ ██╗   ██╗████████╗
                 ██╔══██╗██║   ██╔════╝██╔════╝██╔═══██╗██║   ██║╚══██╔══╝
@@ -215,7 +222,7 @@ Le moteur TUI autonome d'`aiscout` (pure bibliothèque standard Python) s'adapte
 La vue tableau permet de parcourir l'intégralité des fuites identifiées avec pagination fluide, tri multi-critères et recherche plein texte instantanée :
 
 ```text
- ◈ AISCOUT v2.4.3 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
+ ◈ AISCOUT v2.4.4 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
 
    📋 EXPLORATEUR DE SECRETS (1/21) — Mode : MASQUÉ 🛡️ │ Tri : Sévérité (🔴 > 🟡 > 🔵)
 
@@ -236,7 +243,7 @@ La vue tableau permet de parcourir l'intégralité des fuites identifiées avec 
 En appuyant sur `/`, une boîte de saisie inline s'ouvre sur la barre inférieure. Le tableau se met à jour en temps réel (filtre instantané sur la catégorie, l'outil, le projet, le fichier ou la valeur du secret) :
 
 ```text
- ◈ AISCOUT v2.4.3 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
+ ◈ AISCOUT v2.4.4 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
 
    📋 EXPLORATEUR DE SECRETS (1/3) — Mode : MASQUÉ 🛡️ │ Tri : Sévérité (🔴 > 🟡 > 🔵)
          🔍 Recherche active : "github" (3 secrets trouvés) │ [Backspace/Esc] Effacer 
@@ -256,7 +263,7 @@ En appuyant sur `/`, une boîte de saisie inline s'ouvre sur la barre inférieur
 En pressant `Entrée` sur une ligne du tableau, une fiche d'audit chirurgicale s'affiche avec le contexte exact d'usage et l'extrait de log :
 
 ```text
- ◈ AISCOUT v2.4.3 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
+ ◈ AISCOUT v2.4.4 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
 
    ╭──────────────────────────────────────────────────────────────────────────────────╮
    │  FICHE D'AUDIT DU SECRET DÉTECTÉ                                                 │
@@ -285,7 +292,7 @@ En pressant `Entrée` sur une ligne du tableau, une fiche d'audit chirurgicale s
 Lors de l'audit initial, du caviardage ou de l'exportation des dossiers d'audit, une animation à 100ms affiche l'étape en cours et la progression :
 
 ```text
- ◈ AISCOUT v2.4.3 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
+ ◈ AISCOUT v2.4.4 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:30
 
                  █████╗ ██╗   ███████╗ ██████╗ ██████╗ ██╗   ██╗████████╗
                 ██╔══██╗██║   ██╔════╝██╔════╝██╔═══██╗██║   ██║╚══██╔══╝
@@ -321,7 +328,7 @@ Lors de l'audit initial, du caviardage ou de l'exportation des dossiers d'audit,
 Le mode **Watchdog** transforme `aiscout` en un gardien silencieux en arrière-plan :
 
 ```text
- ◈ AISCOUT v2.4.3 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:21
+ ◈ AISCOUT v2.4.4 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:21
 
              📡 SURVEILLANCE EN TEMPS RÉEL (WATCHDOG)  │  🟢 [VEILLE ACTIVE]
        Détecte les sessions IA en écriture et notifie instantanément sur le bureau (Linux / Windows)
@@ -352,7 +359,7 @@ Le mode **Watchdog** transforme `aiscout` en un gardien silencieux en arrière-p
 Le menu `[7]` offre un contrôle absolu sur les fichiers de sauvegarde générés lors des opérations de caviardage :
 
 ```text
- ◈ AISCOUT v2.4.3 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:22
+ ◈ AISCOUT v2.4.4 │ Utilisateur : dev_redious │ Machine : poste-travail       12/09/2026 22:22
 
              ↩️  GESTIONNAIRE DES SAUVEGARDES & RESTAURATION (.BAK)
           Restaurer les fichiers originaux avant caviardage ou purger les sauvegardes.
