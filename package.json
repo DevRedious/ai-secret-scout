@@ -1,6 +1,6 @@
 {
 	"name": "ai-secret-scout",
-	"version": "2.4.6",
+	"version": "2.4.7",
 	"description": "Zero-dependency heuristic secret scanner & redaction tool for AI coding assistants (Claude Code, Antigravity, Codex, Copilot, Cursor)",
 	"homepage": "https://github.com/DevRedious/ai-secret-scout#readme",
 	"repository": {

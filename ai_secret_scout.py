@@ -41,7 +41,7 @@ else:
     import termios
     import tty
 
-VERSION = "2.4.6"
+VERSION = "2.4.7"
 
 # --- INTERNATIONALISATION (I18N) ---
 def detect_default_lang() -> str:
